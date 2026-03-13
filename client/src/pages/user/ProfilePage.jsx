@@ -14,7 +14,7 @@ function ProfilePage() {
           </div>
           <div>
             <p className="font-semibold text-gray-900">{user?.name || 'Unknown'}</p>
-            <p className="text-sm text-gray-500 capitalize">{user?.role || 'student'}</p>
+            <p className="text-sm text-gray-500 capitalize">{user?.role || 'admin'}</p>
           </div>
         </div>
         <p className="mt-6 text-sm text-gray-400">
