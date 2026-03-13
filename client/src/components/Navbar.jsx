@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const linkClass = ({ isActive }) =>
@@ -10,12 +10,14 @@ const linkClass = ({ isActive }) =>
   }`;
 
 function Navbar() {
-  const { isAuthenticated, user, login, logout } = useAuth();
+  const { isAuthenticated, isAdmin, user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const handleDemoLogin = () => {
-    login({ name: 'Admin User', role: 'admin' });
+  const handleLogout = async () => {
     setMobileOpen(false);
+    await logout();
+    navigate('/', { replace: true });
   };
 
   const publicLinks = [
@@ -33,7 +35,7 @@ function Navbar() {
   const visibleLinks = [
     ...publicLinks,
     ...(isAuthenticated ? userLinks : []),
-    ...(user?.role === 'admin' ? adminLinks : []),
+    ...(isAdmin ? adminLinks : []),
   ];
 
   return (
@@ -59,11 +61,19 @@ function Navbar() {
           <div className="hidden md:flex md:items-center md:gap-2">
             {isAuthenticated ? (
               <>
-                <span className="text-sm text-gray-500">
-                  {user.name} ({user.role})
-                </span>
+                <Link
+                  to="/profile"
+                  className="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                >
+                  {user.username}
+                  {isAdmin && (
+                    <span className="ml-1.5 rounded-full bg-brand-100 px-1.5 py-0.5 text-xs font-medium text-brand-700">
+                      admin
+                    </span>
+                  )}
+                </Link>
                 <button
-                  onClick={logout}
+                  onClick={handleLogout}
                   className="rounded-md bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-200 transition-colors"
                 >
                   Logout
@@ -83,12 +93,6 @@ function Navbar() {
                 >
                   Register
                 </Link>
-                <button
-                  onClick={handleDemoLogin}
-                  className="rounded-md border border-gray-300 px-2 py-1 text-xs text-gray-500 hover:bg-gray-50 transition-colors"
-                >
-                  Demo Admin
-                </button>
               </>
             )}
           </div>
@@ -127,12 +131,21 @@ function Navbar() {
             ))}
             <div className="border-t border-gray-100 pt-3 mt-2 flex flex-col gap-2">
               {isAuthenticated ? (
-                <button
-                  onClick={() => { logout(); setMobileOpen(false); }}
-                  className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700"
-                >
-                  Logout ({user.name})
-                </button>
+                <>
+                  <Link
+                    to="/profile"
+                    onClick={() => setMobileOpen(false)}
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    {user.username}
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 text-left"
+                  >
+                    Logout
+                  </button>
+                </>
               ) : (
                 <>
                   <Link to="/login" onClick={() => setMobileOpen(false)} className="text-sm text-gray-700">
@@ -141,9 +154,6 @@ function Navbar() {
                   <Link to="/register" onClick={() => setMobileOpen(false)} className="text-sm text-brand-600 font-medium">
                     Register
                   </Link>
-                  <button onClick={handleDemoLogin} className="text-xs text-gray-400">
-                    Demo Admin
-                  </button>
                 </>
               )}
             </div>
