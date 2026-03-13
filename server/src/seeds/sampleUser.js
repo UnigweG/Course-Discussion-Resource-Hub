@@ -1,3 +1,5 @@
+import mongoose from "mongoose";
+import env from "../config/env.js";
 import User from "../models/User.js";
 
 export const seedSampleUser = async () => {
@@ -19,3 +21,18 @@ export const seedSampleUser = async () => {
     console.error(`Seed error: ${error.message}`);
   }
 };
+
+// Run standalone: npm run seed --workspace server
+const isMain = process.argv[1]?.includes("sampleUser");
+if (isMain) {
+  try {
+    await mongoose.connect(env.mongoUri);
+    console.log("Connected to MongoDB for seeding");
+    await seedSampleUser();
+  } catch (error) {
+    console.error(`Failed to connect: ${error.message}`);
+  } finally {
+    await mongoose.disconnect();
+    console.log("Disconnected from MongoDB");
+  }
+}

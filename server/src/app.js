@@ -19,4 +19,19 @@ if (env.nodeEnv === "development") {
 // --------------- Routes ---------------
 app.use("/api", healthRouter);
 
+// --------------- 404 handler ---------------
+app.use((_req, res) => {
+  res.status(404).json({ success: false, message: "Route not found" });
+});
+
+// --------------- Error handler ---------------
+app.use((err, _req, res, _next) => {
+  console.error(err.stack);
+  const status = err.status || 500;
+  res.status(status).json({
+    success: false,
+    message: env.nodeEnv === "development" ? err.message : "Internal server error",
+  });
+});
+
 export default app;
