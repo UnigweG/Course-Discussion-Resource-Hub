@@ -3,6 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import env from "./config/env.js";
+import authRouter from "./routes/auth.js";
 import healthRouter from "./routes/health.js";
 
 const app = express();
@@ -17,6 +18,7 @@ if (env.nodeEnv === "development") {
 }
 
 // --------------- Routes ---------------
+app.use("/api/auth", authRouter);
 app.use("/api", healthRouter);
 
 // --------------- 404 handler ---------------
