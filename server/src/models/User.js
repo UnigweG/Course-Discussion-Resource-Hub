@@ -15,18 +15,30 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    password: {
+    passwordHash: {
       type: String,
       required: true,
     },
     role: {
       type: String,
-      enum: ["student", "admin"],
-      default: "student",
+      enum: ["user", "admin"],
+      default: "user",
+    },
+    status: {
+      type: String,
+      enum: ["active", "disabled"],
+      default: "active",
+    },
+    lastLoginAt: {
+      type: Date,
+      default: null,
     },
   },
   { timestamps: true },
 );
+
+userSchema.index({ username: 1 }, { unique: true });
+userSchema.index({ email: 1 }, { unique: true });
 
 const User = mongoose.model("User", userSchema);
 

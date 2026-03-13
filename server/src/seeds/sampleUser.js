@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import env from "../config/env.js";
 import User from "../models/User.js";
@@ -12,7 +13,7 @@ export const seedSampleUser = async () => {
   await User.create({
     username: "demo_student",
     email: "demo@university.edu",
-    password: "password123",
+    passwordHash: await bcrypt.hash("password123", 10),
   });
 
   console.log("Seed complete — sample user inserted into 'users' collection");
