@@ -13,8 +13,8 @@ function Navbar() {
   const { isAuthenticated, user, login, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const handleDemoLogin = (role) => {
-    login({ name: role === 'admin' ? 'Admin User' : 'Jane Doe', role });
+  const handleDemoLogin = () => {
+    login({ name: 'Admin User', role: 'admin' });
     setMobileOpen(false);
   };
 
@@ -83,15 +83,8 @@ function Navbar() {
                 >
                   Register
                 </Link>
-                {/* Demo login buttons for dev */}
                 <button
-                  onClick={() => handleDemoLogin('student')}
-                  className="rounded-md border border-gray-300 px-2 py-1 text-xs text-gray-500 hover:bg-gray-50 transition-colors"
-                >
-                  Demo User
-                </button>
-                <button
-                  onClick={() => handleDemoLogin('admin')}
+                  onClick={handleDemoLogin}
                   className="rounded-md border border-gray-300 px-2 py-1 text-xs text-gray-500 hover:bg-gray-50 transition-colors"
                 >
                   Demo Admin
@@ -148,10 +141,7 @@ function Navbar() {
                   <Link to="/register" onClick={() => setMobileOpen(false)} className="text-sm text-brand-600 font-medium">
                     Register
                   </Link>
-                  <button onClick={() => handleDemoLogin('student')} className="text-xs text-gray-400">
-                    Demo User
-                  </button>
-                  <button onClick={() => handleDemoLogin('admin')} className="text-xs text-gray-400">
+                  <button onClick={handleDemoLogin} className="text-xs text-gray-400">
                     Demo Admin
                   </button>
                 </>
