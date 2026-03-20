@@ -1,0 +1,62 @@
+[
+  {
+    "id": 1,
+    "title": "Midterm review — what topics are confirmed?",
+    "course": "COSC 360",
+    "description": "Can anyone share the list of topics the professor confirmed for the midterm? I missed the last lecture."
+  },
+  {
+    "id": 2,
+    "title": "Best resources for learning React hooks",
+    "course": "COSC 360",
+    "description": "Looking for tutorials or videos that explain useEffect and useContext clearly."
+  },
+  {
+    "id": 3,
+    "title": "Trouble understanding Big-O notation",
+    "course": "COSC 222",
+    "description": "I keep mixing up O(n log n) and O(n^2) cases. Any tips for remembering?"
+  },
+  {
+    "id": 4,
+    "title": "Study group for linear algebra final",
+    "course": "MATH 221",
+    "description": "Forming a study group for the final exam. We meet Tuesdays at 5 PM in the library."
+  },
+  {
+    "id": 5,
+    "title": "Assignment 3 clarification on database schema",
+    "course": "COSC 304",
+    "description": "Is the ER diagram supposed to include the junction table for many-to-many, or just the entities?"
+  },
+  {
+    "id": 6,
+    "title": "How to approach proof by induction?",
+    "course": "MATH 101",
+    "description": "I understand the base case but struggle with the inductive step. Any worked examples would help."
+  },
+  {
+    "id": 7,
+    "title": "Lab 5 — REST API not returning JSON",
+    "course": "COSC 360",
+    "description": "My Express route sends plain text instead of JSON. I think I'm missing res.json(). Can someone confirm?"
+  },
+  {
+    "id": 8,
+    "title": "Recommended textbook for operating systems?",
+    "course": "COSC 315",
+    "description": "The bookstore is sold out of the required text. Is there an alternative that covers the same material?"
+  },
+  {
+    "id": 9,
+    "title": "Confused about integration by parts",
+    "course": "MATH 101",
+    "description": "When do you choose u and dv? The LIATE rule helps but I still get stuck on trig integrals."
+  },
+  {
+    "id": 10,
+    "title": "Group project — looking for a frontend partner",
+    "course": "COSC 310",
+    "description": "Our team needs one more person comfortable with React or Vue for the semester project. DM me if interested."
+  }
+]
