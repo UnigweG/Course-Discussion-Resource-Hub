@@ -5,6 +5,8 @@ import morgan from "morgan";
 import env from "./config/env.js";
 import authRouter from "./routes/auth.js";
 import healthRouter from "./routes/health.js";
+import searchRouter from "./routes/search.js";
+import discussionsRouter from "./routes/discussions.js";
 
 const app = express();
 
@@ -20,6 +22,8 @@ if (env.nodeEnv === "development") {
 // --------------- Routes ---------------
 app.use("/api/auth", authRouter);
 app.use("/api", healthRouter);
+app.use("/api/search", searchRouter);
+app.use("/api/discussions", discussionsRouter);
 
 // --------------- 404 handler ---------------
 app.use((_req, res) => {
