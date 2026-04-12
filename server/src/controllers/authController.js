@@ -21,7 +21,10 @@ const respondWithAuth = (res, statusCode, user, message) => {
 };
 
 export const register = asyncHandler(async (req, res) => {
-  const user = await registerUser(req.body);
+  // req.file is set by multer if the user uploaded an avatar
+  // we store just the filename so we can serve it via /uploads/:filename
+  const avatarPath = req.file ? req.file.filename : null;
+  const user = await registerUser({ ...req.body, avatarPath });
   respondWithAuth(res, 201, user, "Account created successfully.");
 });
 

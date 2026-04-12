@@ -2,7 +2,12 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
+import path from "path";
+import { fileURLToPath } from "url";
 import env from "./config/env.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import authRouter from "./routes/auth.js";
 import healthRouter from "./routes/health.js";
 import searchRouter from "./routes/search.js";
@@ -18,6 +23,9 @@ app.use(cookieParser(env.cookieSecret));
 if (env.nodeEnv === "development") {
   app.use(morgan("dev"));
 }
+
+// Serve uploaded avatar images as static files at /uploads/<filename>
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // --------------- Routes ---------------
 app.use("/api/auth", authRouter);
