@@ -5,6 +5,7 @@ import PageHeader from '../../components/PageHeader';
 import FormInput from '../../components/FormInput';
 import InlineAlert from '../../components/InlineAlert';
 
+/** Basic field-level validation before the API call. */
 function validate(fields) {
   const errors = {};
   if (!fields.email || !/\S+@\S+\.\S+/.test(fields.email)) {
@@ -28,9 +29,8 @@ function LoginPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFields((prev) => ({ ...prev, [name]: value }));
-    if (fieldErrors[name]) {
-      setFieldErrors((prev) => ({ ...prev, [name]: '' }));
-    }
+    // Clear the field error as soon as the user starts typing again
+    if (fieldErrors[name]) setFieldErrors((prev) => ({ ...prev, [name]: '' }));
   };
 
   const handleSubmit = async (e) => {
@@ -46,6 +46,7 @@ function LoginPage() {
     setIsSubmitting(true);
     try {
       const user = await login({ email: fields.email, password: fields.password });
+      // Admins go straight to the admin panel
       navigate(user.role === 'admin' ? '/admin' : '/dashboard', { replace: true });
     } catch (err) {
       setSubmitError(err.message || 'Login failed. Please try again.');
@@ -60,7 +61,7 @@ function LoginPage() {
       <form
         onSubmit={handleSubmit}
         noValidate
-        className="space-y-4 rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
+        className="space-y-4 card rounded-xl p-6"
       >
         <InlineAlert message={submitError} />
 
@@ -96,9 +97,9 @@ function LoginPage() {
           {isSubmitting ? 'Signing in…' : 'Sign In'}
         </button>
 
-        <p className="text-center text-sm text-gray-500">
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400">
           Don&apos;t have an account?{' '}
-          <Link to="/register" className="font-medium text-brand-600 hover:text-brand-700">
+          <Link to="/register" className="font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700">
             Register
           </Link>
         </p>
