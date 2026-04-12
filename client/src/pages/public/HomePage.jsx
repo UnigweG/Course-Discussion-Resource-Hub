@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SearchBar from '../../components/SearchBar';
+import { useAuth } from '../../contexts/AuthContext';
 
 /** Single discussion preview card used in both the recent and hot lists. */
 function DiscussionCard({ discussion, commentCount }) {
@@ -26,6 +27,7 @@ function DiscussionCard({ discussion, commentCount }) {
 }
 
 function HomePage() {
+  const { isAuthenticated, user } = useAuth();
   const [discussions, setDiscussions] = useState([]);
   const [hotThreads, setHotThreads] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -152,24 +154,51 @@ function HomePage() {
 
       {/* CTA ──────────────────────────────────────────────────────────── */}
       <section className="text-center py-8">
-        <h2 className="text-xl font-bold text-gray-600 dark:text-gray-100">Ready to get started?</h2>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Create an account and join the conversation.
-        </p>
-        <div className="mt-6 flex justify-center gap-3">
-          <Link
-            to="/register"
-            className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-brand-700 transition-colors"
-          >
-            Create Account
-          </Link>
-          <Link
-            to="/search"
-            className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-5 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-          >
-            Browse Threads
-          </Link>
-        </div>
+        {isAuthenticated ? (
+          <>
+            <h2 className="text-xl font-bold text-gray-600 dark:text-gray-100">
+              Welcome back, {user.username}!
+            </h2>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">
+              Ready to contribute? Start a discussion or explore resources.
+            </p>
+            <div className="mt-6 flex justify-center gap-3">
+              <Link
+                to="/submit"
+                className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-brand-700 transition-colors"
+              >
+                Post a Discussion
+              </Link>
+              <Link
+                to="/search"
+                className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-5 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                Browse Threads
+              </Link>
+            </div>
+          </>
+        ) : (
+          <>
+            <h2 className="text-xl font-bold text-gray-600 dark:text-gray-100">Ready to get started?</h2>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">
+              Create an account and join the conversation.
+            </p>
+            <div className="mt-6 flex justify-center gap-3">
+              <Link
+                to="/register"
+                className="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-brand-700 transition-colors"
+              >
+                Create Account
+              </Link>
+              <Link
+                to="/search"
+                className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-5 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+              >
+                Browse Threads
+              </Link>
+            </div>
+          </>
+        )}
       </section>
     </div>
   );
