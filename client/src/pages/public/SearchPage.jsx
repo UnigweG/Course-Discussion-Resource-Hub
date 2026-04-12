@@ -1,21 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import PageHeader from '../../components/PageHeader';
 
 function SearchPage() {
-  const [query, setQuery] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get('q') || '');
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  async function handleSearch(e) {
-    e.preventDefault();
-    if (!query.trim()) return;
-
+  async function runSearch(term) {
+    if (!term.trim()) return;
     setLoading(true);
     setError('');
-
     try {
-      const res = await fetch(`/api/search?q=${encodeURIComponent(query.trim())}`);
+      const res = await fetch(`/api/search?q=${encodeURIComponent(term.trim())}`);
       const data = await res.json();
       setResults(data.results);
     } catch {
@@ -24,6 +23,20 @@ function SearchPage() {
       setLoading(false);
       setQuery('');
     }
+  }
+
+  // Auto-run search if page loaded with ?q= from the homepage search bar
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (q) {
+      runSearch(q);
+      setSearchParams({}, { replace: true });
+    }
+  }, []);
+
+  async function handleSearch(e) {
+    e.preventDefault();
+    runSearch(query);
   }
 
   return (
