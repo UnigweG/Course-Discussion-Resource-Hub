@@ -32,6 +32,8 @@ function RegisterPage() {
     password: '',
     confirmPassword: '',
   });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarError, setAvatarError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,6 +62,7 @@ function RegisterPage() {
         username: fields.username.trim(),
         email: fields.email,
         password: fields.password,
+        avatar: avatarFile || undefined,
       });
       navigate('/dashboard', { replace: true });
     } catch (err) {
@@ -126,6 +129,32 @@ function RegisterPage() {
           autoComplete="new-password"
           error={fieldErrors.confirmPassword}
         />
+
+        {/* Profile picture upload — optional but validated for image type */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Profile Picture <span className="text-gray-400 font-normal">(optional)</span>
+          </label>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/gif,image/webp"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (!file) { setAvatarFile(null); setAvatarError(''); return; }
+              // Client-side file type check before even sending to server
+              const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+              if (!allowed.includes(file.type)) {
+                setAvatarError('Please select a valid image file (jpg, png, gif, webp).');
+                setAvatarFile(null);
+                return;
+              }
+              setAvatarError('');
+              setAvatarFile(file);
+            }}
+            className="w-full text-sm text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100"
+          />
+          {avatarError && <p className="mt-1 text-xs text-red-500">{avatarError}</p>}
+        </div>
 
         <button
           type="submit"

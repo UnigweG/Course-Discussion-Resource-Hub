@@ -12,7 +12,11 @@ async function fetchClient(path, options = {}) {
     ...rest,
   };
 
-  if (body !== undefined) {
+  if (body instanceof FormData) {
+    // Let the browser set Content-Type with the correct multipart boundary
+    delete config.headers['Content-Type'];
+    config.body = body;
+  } else if (body !== undefined) {
     config.body = JSON.stringify(body);
   }
 
