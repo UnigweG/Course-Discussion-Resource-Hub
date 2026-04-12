@@ -74,8 +74,13 @@
 
   body {
     @apply min-h-screen bg-gray-50 text-gray-900;
-    @apply dark:bg-gray-950 dark:text-gray-100;
   }
+}
+
+/* Explicit dark-mode base — outside @layer so it has highest unlayered priority */
+.dark body {
+  background-color: rgb(3 7 18);      /* gray-950 */
+  color:            rgb(243 244 246); /* gray-100 */
 }
 
 /* ─── Utility shorthands ──────────────────────────────────────────────────── */
@@ -84,14 +89,13 @@
   /* Standard card surface — use instead of repeating bg-white border … */
   .card {
     @apply bg-white border border-gray-200 rounded-xl shadow-sm;
-    @apply dark:bg-gray-800 dark:border-gray-700;
   }
 
   /* Form fields */
   .input {
     @apply w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white text-gray-900;
     @apply focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent;
-    @apply dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 dark:placeholder-gray-500;
+    @apply placeholder-gray-400;
   }
 
   /* Primary action button */
@@ -103,7 +107,37 @@
   /* Secondary / outline button */
   .btn-secondary {
     @apply px-4 py-2 rounded-md text-sm font-medium border border-gray-300 text-gray-700 bg-white hover:bg-gray-50;
-    @apply dark:border-gray-600 dark:text-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700;
     @apply transition-colors;
   }
+}
+
+/* ─── Dark-mode overrides for component utilities ─────────────────────────
+   Using explicit .dark ancestor selectors (not @apply dark:) for maximum
+   reliability — avoids the :is(.dark *) specificity edge-cases that
+   @apply generates in Tailwind v3 @layer components blocks.
+──────────────────────────────────────────────────────────────────────────── */
+
+.dark .card {
+  background-color: rgb(31 41 55);   /* gray-800 */
+  border-color:     rgb(55 65 81);   /* gray-700 */
+}
+
+.dark .input {
+  background-color:  rgb(31 41 55);   /* gray-800 */
+  border-color:      rgb(75 85 99);   /* gray-600 */
+  color:             rgb(243 244 246); /* gray-100 */
+}
+
+.dark .input::placeholder {
+  color: rgb(107 114 128); /* gray-500 */
+}
+
+.dark .btn-secondary {
+  border-color:      rgb(75 85 99);   /* gray-600 */
+  color:             rgb(229 231 235); /* gray-200 */
+  background-color:  rgb(31 41 55);   /* gray-800 */
+}
+
+.dark .btn-secondary:hover {
+  background-color: rgb(55 65 81);   /* gray-700 */
 }
