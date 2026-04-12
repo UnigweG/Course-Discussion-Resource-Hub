@@ -17,6 +17,7 @@ import ProfilePage from '../pages/user/ProfilePage';
 import ActivityPage from '../pages/user/ActivityPage';
 import MeetupsPage from '../pages/user/MeetupsPage';
 import SubmitDiscussionPage from '../pages/user/SubmitDiscussionPage';
+import ResourcesPage from '../pages/user/ResourcesPage';
 
 // Admin pages
 import AdminDashboardPage from '../pages/admin/AdminDashboardPage';
@@ -38,6 +39,7 @@ function AppRoutes() {
           <Route path="profile" element={<ProfilePage />} />
           <Route path="activity" element={<ActivityPage />} />
           <Route path="meetups" element={<MeetupsPage />} />
+          <Route path="resources" element={<ResourcesPage />} />
           <Route path="submit" element={<SubmitDiscussionPage />} />
         </Route>
 
