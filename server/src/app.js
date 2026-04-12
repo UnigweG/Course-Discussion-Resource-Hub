@@ -11,6 +11,7 @@ import searchRouter from "./routes/search.js";
 import discussionsRouter from "./routes/discussions.js";
 import adminRouter from "./routes/admin.js";
 import meetupsRouter from "./routes/meetups.js";
+import resourcesRouter from "./routes/resources.js";
 
 // __dirname is not available in ES modules — derive it from import.meta.url
 const __filename = fileURLToPath(import.meta.url);
@@ -37,6 +38,7 @@ app.use("/api/search", searchRouter);
 app.use("/api/discussions", discussionsRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/meetups", meetupsRouter);
+app.use("/api/resources", resourcesRouter);
 
 // --------------- 404 handler ---------------
 app.use((_req, res) => {
