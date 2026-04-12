@@ -7,6 +7,8 @@ import {
   removeDiscussion,
   searchForDiscussions,
 } from "../services/discussionService.js";
+import Comment from "../models/Comment.js";
+import Discussion from "../models/Discussion.js";
 
 // GET /api/discussions — return all discussions
 export const getAll = asyncHandler(async (_req, res) => {
@@ -46,4 +48,25 @@ export const remove = asyncHandler(async (req, res) => {
 export const search = asyncHandler(async (req, res) => {
   const results = await searchForDiscussions(req.query.q || "");
   res.json({ success: true, results });
+});
+
+// GET /api/discussions/hot — top 5 discussions by comment count in last 7 days
+export const getHot = asyncHandler(async (_req, res) => {
+  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+  const counts = await Comment.aggregate([
+    { $match: { createdAt: { $gte: since } } },
+    { $group: { _id: "$discussion", count: { $sum: 1 } } },
+    { $sort: { count: -1 } },
+    { $limit: 5 },
+  ]);
+
+  const ids = counts.map((c) => c._id);
+  const discussions = await Discussion.find({ _id: { $in: ids } }).select("title course authorUsername createdAt");
+
+  const withCount = discussions.map((d) => {
+    const found = counts.find((c) => String(c._id) === String(d._id));
+    return { ...d.toObject(), commentCount: found ? found.count : 0 };
+  }).sort((a, b) => b.commentCount - a.commentCount);
+
+  res.json({ success: true, data: withCount });
 });
