@@ -1,32 +1,27 @@
 import { useState, useEffect } from 'react';
 import PageHeader from '../../components/PageHeader';
+import StatCard from '../../components/StatCard';
+import { useToast } from '../../contexts/ToastContext';
 
-function StatCard({ label, value, icon }) {
-  return (
-    <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm flex items-center gap-4">
-      <span className="text-2xl">{icon}</span>
-      <div>
-        <p className="text-2xl font-bold text-gray-900">{value}</p>
-        <p className="text-sm text-gray-500">{label}</p>
-      </div>
-    </div>
-  );
-}
-
+/**
+ * AdminDashboardPage — available only to users with role === 'admin'.
+ * Two management tabs:
+ *   Users       — search, role/status badges, enable/disable accounts
+ *   Discussions — list all posts with a delete button
+ */
 function AdminDashboardPage() {
+  const { toast } = useToast();
   const [tab, setTab] = useState('users');
   const [stats, setStats] = useState(null);
 
-  // Users tab state
   const [users, setUsers] = useState([]);
   const [userSearch, setUserSearch] = useState('');
   const [loadingUsers, setLoadingUsers] = useState(false);
 
-  // Discussions tab state
   const [discussions, setDiscussions] = useState([]);
   const [loadingDiscussions, setLoadingDiscussions] = useState(false);
 
-  // Load stats on mount
+  // Fetch platform-wide stats for the three stat cards
   useEffect(() => {
     fetch('/api/admin/stats', { credentials: 'include' })
       .then((r) => r.json())
@@ -34,7 +29,7 @@ function AdminDashboardPage() {
       .catch(() => {});
   }, []);
 
-  // Load users when on users tab
+  // Re-fetch users whenever the active tab is "users" or the search term changes
   useEffect(() => {
     if (tab !== 'users') return;
     setLoadingUsers(true);
@@ -45,7 +40,7 @@ function AdminDashboardPage() {
       .finally(() => setLoadingUsers(false));
   }, [tab, userSearch]);
 
-  // Load discussions when on discussions tab
+  // Fetch discussions when the discussions tab becomes active
   useEffect(() => {
     if (tab !== 'discussions') return;
     setLoadingDiscussions(true);
@@ -67,6 +62,7 @@ function AdminDashboardPage() {
       });
       if (res.ok) {
         setUsers((prev) => prev.map((u) => u._id === userId ? { ...u, status: newStatus } : u));
+        toast(`User ${newStatus}.`, 'success');
       }
     } catch {}
   }
@@ -75,7 +71,10 @@ function AdminDashboardPage() {
     if (!window.confirm('Delete this discussion and all its comments?')) return;
     try {
       const res = await fetch(`/api/admin/discussions/${id}`, { method: 'DELETE', credentials: 'include' });
-      if (res.ok) setDiscussions((prev) => prev.filter((d) => d._id !== id));
+      if (res.ok) {
+        setDiscussions((prev) => prev.filter((d) => d._id !== id));
+        toast('Discussion deleted.', 'success');
+      }
     } catch {}
   }
 
@@ -83,21 +82,23 @@ function AdminDashboardPage() {
     <div>
       <PageHeader title="Admin Dashboard" description="Manage users and moderate content." />
 
-      {/* Stats row */}
+      {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3 mb-8">
-        <StatCard label="Total Users" value={stats?.totalUsers ?? '…'} icon="👥" />
-        <StatCard label="Discussions" value={stats?.totalDiscussions ?? '…'} icon="💬" />
-        <StatCard label="Comments" value={stats?.totalComments ?? '…'} icon="✏️" />
+        <StatCard label="Total Users"  value={stats?.totalUsers       ?? '…'} icon="👥" />
+        <StatCard label="Discussions"  value={stats?.totalDiscussions ?? '…'} icon="💬" />
+        <StatCard label="Comments"     value={stats?.totalComments    ?? '…'} icon="✏️" />
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6 border-b border-gray-200">
+      <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">
         {['users', 'discussions'].map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`pb-2 px-4 text-sm font-medium capitalize border-b-2 transition-colors ${
-              tab === t ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+              tab === t
+                ? 'border-brand-600 text-brand-600 dark:text-brand-400 dark:border-brand-400'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
             }`}
           >
             {t}
@@ -113,41 +114,47 @@ function AdminDashboardPage() {
             value={userSearch}
             onChange={(e) => setUserSearch(e.target.value)}
             placeholder="Search by username or email…"
-            className="w-full max-w-sm border border-gray-300 rounded-md px-3 py-2 text-sm mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input max-w-sm mb-4"
           />
           {loadingUsers ? (
-            <p className="text-sm text-gray-500">Loading users…</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Loading users…</p>
           ) : (
-            <div className="overflow-x-auto rounded-lg border border-gray-200">
+            <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 text-gray-600 text-left">
+                <thead className="bg-gray-50 dark:bg-gray-800/60 text-gray-600 dark:text-gray-300 text-left">
                   <tr>
-                    <th className="px-4 py-3 font-medium">Username</th>
-                    <th className="px-4 py-3 font-medium">Email</th>
-                    <th className="px-4 py-3 font-medium">Role</th>
-                    <th className="px-4 py-3 font-medium">Status</th>
-                    <th className="px-4 py-3 font-medium">Actions</th>
+                    {['Username', 'Email', 'Role', 'Status', 'Actions'].map((h) => (
+                      <th key={h} className="px-4 py-3 font-medium">{h}</th>
+                    ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                   {users.map((u) => (
-                    <tr key={u._id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 font-medium text-gray-900">{u.username}</td>
-                      <td className="px-4 py-3 text-gray-600">{u.email}</td>
+                    <tr key={u._id} className="hover:bg-gray-50 dark:hover:bg-gray-800/40">
+                      <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100">{u.username}</td>
+                      <td className="px-4 py-3 text-gray-600 dark:text-gray-300">{u.email}</td>
                       <td className="px-4 py-3">
-                        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-600'}`}>
-                          {u.role}
-                        </span>
+                        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                          u.role === 'admin'
+                            ? 'bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+                        }`}>{u.role}</span>
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${u.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                          {u.status}
-                        </span>
+                        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                          u.status === 'active'
+                            ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400'
+                            : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'
+                        }`}>{u.status}</span>
                       </td>
                       <td className="px-4 py-3">
                         <button
                           onClick={() => toggleUserStatus(u._id, u.status)}
-                          className={`text-xs px-3 py-1 rounded-md font-medium ${u.status === 'active' ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}
+                          className={`text-xs px-3 py-1 rounded-md font-medium transition-colors ${
+                            u.status === 'active'
+                              ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100'
+                              : 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 hover:bg-green-100'
+                          }`}
                         >
                           {u.status === 'active' ? 'Disable' : 'Enable'}
                         </button>
@@ -155,7 +162,11 @@ function AdminDashboardPage() {
                     </tr>
                   ))}
                   {users.length === 0 && (
-                    <tr><td colSpan={5} className="px-4 py-6 text-center text-gray-400">No users found.</td></tr>
+                    <tr>
+                      <td colSpan={5} className="px-4 py-6 text-center text-gray-400 dark:text-gray-500">
+                        No users found.
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>
@@ -168,25 +179,27 @@ function AdminDashboardPage() {
       {tab === 'discussions' && (
         <div>
           {loadingDiscussions ? (
-            <p className="text-sm text-gray-500">Loading discussions…</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Loading discussions…</p>
           ) : (
             <div className="space-y-3">
               {discussions.map((d) => (
-                <div key={d._id} className="flex items-start justify-between gap-4 bg-white border border-gray-200 rounded-lg px-4 py-3 shadow-sm">
+                <div key={d._id} className="card rounded-lg px-4 py-3 flex items-start justify-between gap-4">
                   <div>
-                    <p className="font-medium text-gray-900 text-sm">{d.title}</p>
-                    <p className="text-xs text-blue-600 mt-0.5">{d.course} · by {d.authorUsername}</p>
+                    <p className="font-medium text-gray-900 dark:text-gray-100 text-sm">{d.title}</p>
+                    <p className="text-xs text-brand-600 dark:text-brand-400 mt-0.5">
+                      {d.course} · by {d.authorUsername}
+                    </p>
                   </div>
                   <button
                     onClick={() => deleteDiscussion(d._id)}
-                    className="text-xs px-3 py-1 rounded-md bg-red-50 text-red-600 hover:bg-red-100 font-medium shrink-0"
+                    className="text-xs px-3 py-1 rounded-md bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 font-medium shrink-0 transition-colors"
                   >
                     Delete
                   </button>
                 </div>
               ))}
               {discussions.length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-6">No discussions found.</p>
+                <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-6">No discussions found.</p>
               )}
             </div>
           )}

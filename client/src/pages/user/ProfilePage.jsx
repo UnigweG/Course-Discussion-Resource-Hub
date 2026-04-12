@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
 import PageHeader from '../../components/PageHeader';
 
 function formatDate(dateStr) {
@@ -11,6 +12,7 @@ const roleLabel = { admin: 'Administrator', user: 'Student' };
 
 function ProfilePage() {
   const { user, isLoading, refreshSession } = useAuth();
+  const { toast } = useToast();
 
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState('');
@@ -18,17 +20,23 @@ function ProfilePage() {
   const [avatarPreview, setAvatarPreview] = useState(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState('');
-  const [saveSuccess, setSaveSuccess] = useState('');
 
-  // useRef to programmatically trigger the hidden file input
+  // useRef to programmatically trigger the hidden file input without custom styling hacks
   const fileInputRef = useRef(null);
+
+  // Revoke the object URL when a new file is selected or the component unmounts
+  // to prevent memory leaks from URL.createObjectURL
+  useEffect(() => {
+    return () => {
+      if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+    };
+  }, [avatarPreview]);
 
   function startEditing() {
     setUsername(user.username);
     setAvatarFile(null);
     setAvatarPreview(null);
     setSaveError('');
-    setSaveSuccess('');
     setIsEditing(true);
   }
 
@@ -37,11 +45,12 @@ function ProfilePage() {
     if (!file) return;
     const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     if (!allowed.includes(file.type)) {
-      setSaveError('Please select a valid image file.');
+      setSaveError('Please select a valid image file (jpg, png, gif, webp).');
       return;
     }
+    // Revoke previous preview URL before creating a new one
+    if (avatarPreview) URL.revokeObjectURL(avatarPreview);
     setAvatarFile(file);
-    // show a preview before uploading
     setAvatarPreview(URL.createObjectURL(file));
     setSaveError('');
   }
@@ -54,7 +63,6 @@ function ProfilePage() {
     }
     setSaving(true);
     setSaveError('');
-    setSaveSuccess('');
 
     try {
       const formData = new FormData();
@@ -67,15 +75,14 @@ function ProfilePage() {
         body: formData,
       });
       const data = await res.json();
-
       if (!res.ok) { setSaveError(data.message || 'Update failed.'); return; }
 
-      setSaveSuccess('Profile updated!');
       setIsEditing(false);
-      // refresh auth context so navbar and other components see new username/avatar
+      // Refresh auth context so navbar and other components reflect the new username/avatar
       await refreshSession();
+      toast('Profile updated!', 'success');
     } catch {
-      setSaveError('Something went wrong.');
+      setSaveError('Something went wrong. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -83,8 +90,17 @@ function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[40vh] items-center justify-center">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" />
+      <div className="max-w-lg space-y-4 animate-pulse">
+        <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
+        <div className="card rounded-xl p-6 space-y-3">
+          <div className="flex gap-4">
+            <div className="h-14 w-14 rounded-full bg-gray-200 dark:bg-gray-700 shrink-0" />
+            <div className="flex-1 space-y-2">
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
+              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -92,102 +108,108 @@ function ProfilePage() {
   if (!user) return <p className="text-sm text-gray-500">You are not signed in.</p>;
 
   const initials = user.username?.slice(0, 2).toUpperCase() || '??';
+  // avatarPreview is the local preview; user.avatar is the stored filename served at /uploads/
   const avatarSrc = avatarPreview || (user.avatar ? `/uploads/${user.avatar}` : null);
 
   return (
     <div>
       <PageHeader title="Profile" description="Your account details." />
 
-      {saveSuccess && (
-        <div className="mb-4 rounded-md bg-green-50 border border-green-200 px-4 py-2 text-sm text-green-700">
-          {saveSuccess}
-        </div>
-      )}
-
-      <div className="max-w-lg rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-        {/* Avatar header */}
-        <div className="flex items-center gap-4 px-6 py-5 border-b border-gray-100">
-          <div className="h-14 w-14 shrink-0 rounded-full overflow-hidden bg-blue-100 flex items-center justify-center">
+      <div className="max-w-lg card rounded-xl overflow-hidden">
+        {/* Avatar / identity header */}
+        <div className="flex items-center gap-4 px-6 py-5 border-b border-gray-100 dark:border-gray-700">
+          <div className="h-16 w-16 shrink-0 rounded-full overflow-hidden bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center">
             {avatarSrc ? (
               <img src={avatarSrc} alt="avatar" className="h-full w-full object-cover" />
             ) : (
-              <span className="text-xl font-bold text-blue-700">{initials}</span>
+              <span className="text-xl font-bold text-brand-700 dark:text-brand-300">{initials}</span>
             )}
           </div>
           <div>
-            <p className="font-semibold text-gray-900">{user.username}</p>
-            <span className="text-xs text-gray-500">{roleLabel[user.role] ?? user.role}</span>
+            <p className="font-semibold text-gray-900 dark:text-gray-100">{user.username}</p>
+            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+              user.role === 'admin'
+                ? 'bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300'
+            }`}>
+              {roleLabel[user.role] ?? user.role}
+            </span>
           </div>
         </div>
 
         {!isEditing ? (
-          // View mode
+          /* View mode */
           <div className="px-6 py-4 space-y-3">
-            <div className="flex justify-between text-sm py-2 border-b border-gray-100">
-              <span className="text-gray-500 font-medium">Email</span>
-              <span className="text-gray-900">{user.email}</span>
-            </div>
-            <div className="flex justify-between text-sm py-2 border-b border-gray-100">
-              <span className="text-gray-500 font-medium">Member since</span>
-              <span className="text-gray-900">{formatDate(user.createdAt)}</span>
-            </div>
-            <div className="flex justify-between text-sm py-2">
-              <span className="text-gray-500 font-medium">Last login</span>
-              <span className="text-gray-900">{formatDate(user.lastLoginAt)}</span>
-            </div>
-            <button
-              onClick={startEditing}
-              className="mt-2 w-full rounded-md bg-blue-600 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            >
+            {[
+              { label: 'Email',        value: user.email },
+              { label: 'Member since', value: formatDate(user.createdAt) },
+              { label: 'Last login',   value: formatDate(user.lastLoginAt) },
+            ].map(({ label, value }) => (
+              <div key={label} className="flex justify-between text-sm py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
+                <span className="text-gray-500 dark:text-gray-400 font-medium">{label}</span>
+                <span className="text-gray-900 dark:text-gray-100">{value}</span>
+              </div>
+            ))}
+            <button onClick={startEditing} className="btn-primary w-full mt-2">
               Edit Profile
             </button>
           </div>
         ) : (
-          // Edit mode
+          /* Edit mode */
           <form onSubmit={handleSave} className="px-6 py-4 space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Username
+              </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="input"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Profile Picture</label>
-              {/* Hidden file input triggered via useRef */}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/gif,image/webp"
-                onChange={handleFileChange}
-                className="hidden"
-              />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current.click()}
-                className="text-sm text-blue-600 hover:underline"
-              >
-                {avatarFile ? avatarFile.name : 'Choose new image…'}
-              </button>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Profile Picture
+              </label>
+              <div className="flex items-center gap-3">
+                {/* Avatar preview while editing */}
+                <div className="h-12 w-12 shrink-0 rounded-full overflow-hidden bg-brand-100 dark:bg-brand-900/30 flex items-center justify-center">
+                  {avatarSrc ? (
+                    <img src={avatarSrc} alt="preview" className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="text-sm font-bold text-brand-700 dark:text-brand-300">{initials}</span>
+                  )}
+                </div>
+                {/* Hidden file input triggered by the button via useRef */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current.click()}
+                  className="text-sm text-brand-600 dark:text-brand-400 hover:underline"
+                >
+                  {avatarFile ? avatarFile.name : 'Choose new image…'}
+                </button>
+              </div>
             </div>
 
-            {saveError && <p className="text-red-500 text-sm">{saveError}</p>}
+            {saveError && <p className="text-red-500 dark:text-red-400 text-sm">{saveError}</p>}
 
             <div className="flex gap-3">
-              <button
-                type="submit"
-                disabled={saving}
-                className="flex-1 rounded-md bg-blue-600 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-              >
+              <button type="submit" disabled={saving} className="btn-primary flex-1">
                 {saving ? 'Saving…' : 'Save Changes'}
               </button>
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}
-                className="flex-1 rounded-md border border-gray-300 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="btn-secondary flex-1"
               >
                 Cancel
               </button>
