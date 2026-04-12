@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   getCurrentUser,
+  getUserActivity,
   login,
   logout,
   register,
@@ -19,5 +20,8 @@ router.get("/me", requireAuth, getCurrentUser);
 
 // Profile update — requires auth, accepts optional new avatar image
 router.patch("/profile", requireAuth, uploadAvatar, updateProfile);
+
+// User activity stats and recent items
+router.get("/activity", requireAuth, getUserActivity);
 
 export default router;

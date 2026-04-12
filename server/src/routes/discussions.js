@@ -3,6 +3,7 @@ import { requireAuth } from "../middleware/auth.js";
 import {
   create,
   getAll,
+  getHot,
   getOne,
   remove,
   update,
@@ -13,6 +14,7 @@ const router = Router();
 
 // Public routes — anyone can read discussions
 router.get("/", getAll);
+router.get("/hot", getHot);
 router.get("/:id", getOne);
 
 // Protected routes — must be logged in to post, edit, or delete

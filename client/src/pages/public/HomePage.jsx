@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SearchBar from '../../components/SearchBar';
 
-function DiscussionCard({ discussion }) {
+function DiscussionCard({ discussion, commentCount }) {
   return (
     <li className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
       <Link to={`/threads/${discussion._id}`}>
@@ -11,25 +11,33 @@ function DiscussionCard({ discussion }) {
         </h3>
       </Link>
       <p className="text-xs text-blue-600 mt-1 font-medium">{discussion.course}</p>
-      <p className="text-sm text-gray-500 mt-1 line-clamp-2">{discussion.body}</p>
-      <p className="text-xs text-gray-400 mt-2">
-        Posted by {discussion.authorUsername}
-      </p>
+      {discussion.body && (
+        <p className="text-sm text-gray-500 mt-1 line-clamp-2">{discussion.body}</p>
+      )}
+      <div className="flex items-center justify-between mt-2">
+        <p className="text-xs text-gray-400">by {discussion.authorUsername}</p>
+        {commentCount !== undefined && (
+          <span className="text-xs text-gray-400">💬 {commentCount}</span>
+        )}
+      </div>
     </li>
   );
 }
 
 function HomePage() {
   const [discussions, setDiscussions] = useState([]);
+  const [hotThreads, setHotThreads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Fetch the latest discussions from the DB on page load
   useEffect(() => {
-    fetch('/api/discussions')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) setDiscussions(data.data.slice(0, 6)); // show 6 most recent
+    Promise.all([
+      fetch('/api/discussions').then((r) => r.json()),
+      fetch('/api/discussions/hot').then((r) => r.json()),
+    ])
+      .then(([recentData, hotData]) => {
+        if (recentData.success) setDiscussions(recentData.data.slice(0, 6));
+        if (hotData.success) setHotThreads(hotData.data);
       })
       .catch(() => setError('Could not load discussions.'))
       .finally(() => setLoading(false));
@@ -50,40 +58,64 @@ function HomePage() {
         </div>
       </section>
 
-      {/* Recent discussions from DB */}
-      <section>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Recent Discussions</h2>
-          <Link to="/search" className="text-sm text-blue-600 hover:underline">
-            View all →
-          </Link>
-        </div>
-
-        {loading && (
-          <p className="text-sm text-gray-500">Loading discussions…</p>
-        )}
-
-        {error && (
-          <p className="text-sm text-red-500">{error}</p>
-        )}
-
-        {!loading && !error && discussions.length === 0 && (
-          <p className="text-sm text-gray-500">
-            No discussions yet.{' '}
-            <Link to="/submit" className="text-blue-600 hover:underline">
-              Start one!
+      <div className="grid gap-8 lg:grid-cols-3">
+        {/* Recent discussions */}
+        <section className="lg:col-span-2">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Recent Discussions</h2>
+            <Link to="/search" className="text-sm text-blue-600 hover:underline">
+              View all →
             </Link>
-          </p>
-        )}
+          </div>
 
-        {!loading && discussions.length > 0 && (
-          <ul className="space-y-3">
-            {discussions.map((d) => (
-              <DiscussionCard key={d._id} discussion={d} />
-            ))}
-          </ul>
-        )}
-      </section>
+          {loading && <p className="text-sm text-gray-500">Loading discussions…</p>}
+          {error && <p className="text-sm text-red-500">{error}</p>}
+          {!loading && !error && discussions.length === 0 && (
+            <p className="text-sm text-gray-500">
+              No discussions yet.{' '}
+              <Link to="/submit" className="text-blue-600 hover:underline">Start one!</Link>
+            </p>
+          )}
+          {!loading && discussions.length > 0 && (
+            <ul className="space-y-3">
+              {discussions.map((d) => (
+                <DiscussionCard key={d._id} discussion={d} />
+              ))}
+            </ul>
+          )}
+        </section>
+
+        {/* Hot threads sidebar */}
+        <section>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">🔥 Hot This Week</h2>
+          {loading ? (
+            <p className="text-sm text-gray-500">Loading…</p>
+          ) : hotThreads.length === 0 ? (
+            <p className="text-sm text-gray-400">No activity this week yet.</p>
+          ) : (
+            <ul className="space-y-3">
+              {hotThreads.map((d) => (
+                <DiscussionCard key={d._id} discussion={d} commentCount={d.commentCount} />
+              ))}
+            </ul>
+          )}
+
+          <div className="mt-6 space-y-2">
+            <Link
+              to="/meetups"
+              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 transition-colors text-sm font-medium text-gray-700"
+            >
+              📅 Study Meetups
+            </Link>
+            <Link
+              to="/resources"
+              className="flex items-center gap-2 p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 transition-colors text-sm font-medium text-gray-700"
+            >
+              📚 Course Resources
+            </Link>
+          </div>
+        </section>
+      </div>
 
       {/* CTA */}
       <section className="text-center">

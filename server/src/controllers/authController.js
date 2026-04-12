@@ -1,5 +1,8 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import env from "../config/env.js";
+import Discussion from "../models/Discussion.js";
+import Comment from "../models/Comment.js";
+import Resource from "../models/Resource.js";
 import {
   buildAuthCookieOptions,
   clearAuthCookieOptions,
@@ -46,6 +49,27 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
     success: true,
     data: {
       user: req.currentUser,
+    },
+  });
+});
+
+export const getUserActivity = asyncHandler(async (req, res) => {
+  const userId = req.currentUser._id;
+  const [discussions, comments, resources] = await Promise.all([
+    Discussion.find({ author: userId }).sort({ createdAt: -1 }).limit(10).select("title course createdAt"),
+    Comment.find({ author: userId }).sort({ createdAt: -1 }).limit(10).select("body discussion createdAt"),
+    Resource.find({ author: userId }).sort({ createdAt: -1 }).limit(10).select("title course type createdAt"),
+  ]);
+
+  res.json({
+    success: true,
+    data: {
+      counts: {
+        discussions: await Discussion.countDocuments({ author: userId }),
+        comments: await Comment.countDocuments({ author: userId }),
+        resources: await Resource.countDocuments({ author: userId }),
+      },
+      recent: { discussions, comments, resources },
     },
   });
 });
