@@ -7,6 +7,7 @@ import {
   remove,
   update,
 } from "../controllers/discussionController.js";
+import commentRouter from "./comments.js";
 
 const router = Router();
 
@@ -18,5 +19,8 @@ router.get("/:id", getOne);
 router.post("/", requireAuth, create);
 router.put("/:id", requireAuth, update);
 router.delete("/:id", requireAuth, remove);
+
+// Nest comments under discussions: /api/discussions/:discussionId/comments
+router.use("/:discussionId/comments", commentRouter);
 
 export default router;
