@@ -10,17 +10,7 @@
       dark-mode class and colour theme are set on <html> before React renders.
       This prevents the flash of wrong theme/light-mode on page load.
     -->
-    <script>
-      (function () {
-        try {
-          var darkVal = localStorage.getItem('darkMode');
-          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          if (darkVal === 'true' || (darkVal === null && prefersDark)) {
-            document.documentElement.classList.add('dark');
-          }
-        } catch (e) { /* localStorage blocked — safe to ignore */ }
-      })();
-    </script>
+    <script>document.documentElement.classList.add('dark');</script>
   </head>
   <body class="antialiased">
     <div id="root"></div>
