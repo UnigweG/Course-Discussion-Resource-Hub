@@ -66,14 +66,13 @@ function HomePage() {
         {/* Recent discussions (wide column) */}
         <section className="lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Recent Discussions</h2>
+            <h2 className="text-lg font-semibold text-gray-600 dark:text-gray-100">Recent Discussions</h2>
             <Link to="/search" className="text-sm text-brand-600 dark:text-brand-400 hover:underline">
               View all →
             </Link>
           </div>
 
           {loading && (
-            /* Loading skeleton rows */
             <ul className="space-y-3">
               {[...Array(4)].map((_, i) => (
                 <li key={i} className="card rounded-lg p-4 animate-pulse">
@@ -106,7 +105,7 @@ function HomePage() {
         {/* Sidebar ─────────────────────────────────────────────────── */}
         <aside className="space-y-6">
           <section>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">🔥 Hot This Week</h2>
+            <h2 className="text-lg font-semibold text-gray-600 dark:text-gray-100 mb-4">🔥 Hot This Week</h2>
             {loading ? (
               <ul className="space-y-3">
                 {[...Array(3)].map((_, i) => (
@@ -131,19 +130,19 @@ function HomePage() {
           <section className="space-y-2">
             <Link
               to="/meetups"
-              className="flex items-center gap-3 card rounded-lg p-3 hover:shadow-md transition-shadow text-sm font-medium text-gray-700 dark:text-gray-200"
+              className="flex items-center gap-3 card rounded-lg p-3 hover:shadow-md transition-shadow text-sm font-medium text-gray-600 dark:text-gray-200"
             >
               <span className="text-xl">📅</span> Study Meetups
             </Link>
             <Link
               to="/resources"
-              className="flex items-center gap-3 card rounded-lg p-3 hover:shadow-md transition-shadow text-sm font-medium text-gray-700 dark:text-gray-200"
+              className="flex items-center gap-3 card rounded-lg p-3 hover:shadow-md transition-shadow text-sm font-medium text-gray-600 dark:text-gray-200"
             >
               <span className="text-xl">📚</span> Course Resources
             </Link>
             <Link
               to="/submit"
-              className="flex items-center gap-3 card rounded-lg p-3 hover:shadow-md transition-shadow text-sm font-medium text-gray-700 dark:text-gray-200"
+              className="flex items-center gap-3 card rounded-lg p-3 hover:shadow-md transition-shadow text-sm font-medium text-gray-600 dark:text-gray-200"
             >
               <span className="text-xl">✏️</span> Post a Discussion
             </Link>
@@ -153,7 +152,7 @@ function HomePage() {
 
       {/* CTA ──────────────────────────────────────────────────────────── */}
       <section className="text-center py-8">
-        <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Ready to get started?</h2>
+        <h2 className="text-xl font-bold text-gray-600 dark:text-gray-100">Ready to get started?</h2>
         <p className="mt-2 text-gray-600 dark:text-gray-400">
           Create an account and join the conversation.
         </p>
@@ -166,7 +165,7 @@ function HomePage() {
           </Link>
           <Link
             to="/search"
-            className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-5 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-5 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-200 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
           >
             Browse Threads
           </Link>
