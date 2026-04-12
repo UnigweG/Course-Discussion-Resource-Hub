@@ -5,6 +5,7 @@ import {
   findUserByEmail,
   findUserByUsername,
   updateLastLoginAt,
+  updateUserProfile,
 } from "../repositories/userRepository.js";
 import AppError from "../utils/AppError.js";
 import {
@@ -64,4 +65,25 @@ export const loginUser = async (payload) => {
   }
 
   return updateLastLoginAt(user.id);
+};
+
+export const updateProfile = async (userId, payload) => {
+  const updates = {};
+
+  if (payload.username) {
+    const trimmed = payload.username.trim();
+    if (trimmed.length < 3) throw new AppError("Username must be at least 3 characters.", 400);
+    // make sure the new username isn't already taken
+    const existing = await findUserByUsername(trimmed);
+    if (existing && existing._id.toString() !== userId.toString()) {
+      throw new AppError("That username is already taken.", 409);
+    }
+    updates.username = trimmed;
+  }
+
+  if (payload.avatarPath) {
+    updates.avatar = payload.avatarPath;
+  }
+
+  return updateUserProfile(userId, updates);
 };

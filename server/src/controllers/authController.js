@@ -5,7 +5,7 @@ import {
   clearAuthCookieOptions,
   createAuthToken,
 } from "../utils/authToken.js";
-import { loginUser, registerUser } from "../services/authService.js";
+import { loginUser, registerUser, updateProfile as updateProfileService } from "../services/authService.js";
 
 const respondWithAuth = (res, statusCode, user, message) => {
   const token = createAuthToken(user);
@@ -48,4 +48,11 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
       user: req.currentUser,
     },
   });
+});
+
+export const updateProfile = asyncHandler(async (req, res) => {
+  // req.file is set by multer if a new avatar was uploaded
+  const avatarPath = req.file ? req.file.filename : null;
+  const user = await updateProfileService(req.currentUser._id, { ...req.body, avatarPath });
+  res.json({ success: true, message: "Profile updated.", data: { user } });
 });
