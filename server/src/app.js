@@ -9,6 +9,7 @@ import authRouter from "./routes/auth.js";
 import healthRouter from "./routes/health.js";
 import searchRouter from "./routes/search.js";
 import discussionsRouter from "./routes/discussions.js";
+import adminRouter from "./routes/admin.js";
 
 // __dirname is not available in ES modules — derive it from import.meta.url
 const __filename = fileURLToPath(import.meta.url);
@@ -33,6 +34,7 @@ app.use("/api/auth", authRouter);
 app.use("/api", healthRouter);
 app.use("/api/search", searchRouter);
 app.use("/api/discussions", discussionsRouter);
+app.use("/api/admin", adminRouter);
 
 // --------------- 404 handler ---------------
 app.use((_req, res) => {
