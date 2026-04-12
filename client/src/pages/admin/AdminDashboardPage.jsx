@@ -83,11 +83,44 @@ function AdminDashboardPage() {
       <PageHeader title="Admin Dashboard" description="Manage users and moderate content." />
 
       {/* Stats */}
-      <div className="grid gap-4 sm:grid-cols-3 mb-8">
+      <div className="grid gap-4 sm:grid-cols-3 mb-6">
         <StatCard label="Total Users"  value={stats?.totalUsers       ?? '…'} icon="👥" />
         <StatCard label="Discussions"  value={stats?.totalDiscussions ?? '…'} icon="💬" />
         <StatCard label="Comments"     value={stats?.totalComments    ?? '…'} icon="✏️" />
       </div>
+
+      {/* Activity bar chart */}
+      {stats && (
+        <div className="card rounded-xl p-5 mb-8">
+          <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-4">
+            Platform Activity
+          </h2>
+          {(() => {
+            const bars = [
+              { label: 'Users',       value: stats.totalUsers,       color: 'bg-brand-500' },
+              { label: 'Discussions', value: stats.totalDiscussions, color: 'bg-indigo-400' },
+              { label: 'Comments',    value: stats.totalComments,    color: 'bg-purple-400' },
+            ];
+            const max = Math.max(...bars.map(b => b.value), 1);
+            return (
+              <div className="space-y-3">
+                {bars.map(({ label, value, color }) => (
+                  <div key={label} className="flex items-center gap-3">
+                    <span className="w-24 text-xs text-gray-600 dark:text-gray-400 text-right shrink-0">{label}</span>
+                    <div className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
+                      <div
+                        className={`${color} h-4 rounded-full transition-all duration-700`}
+                        style={{ width: `${(value / max) * 100}%` }}
+                      />
+                    </div>
+                    <span className="w-8 text-xs font-semibold text-gray-700 dark:text-gray-300 shrink-0">{value}</span>
+                  </div>
+                ))}
+              </div>
+            );
+          })()}
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700">

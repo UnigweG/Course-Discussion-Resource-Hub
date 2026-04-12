@@ -26,20 +26,20 @@ function AppRoutes() {
   return (
     <Routes>
       <Route element={<MainLayout />}>
-        {/* Public */}
+        {/* Public — browsable without an account */}
         <Route index element={<HomePage />} />
         <Route path="search" element={<SearchPage />} />
         <Route path="threads/:threadId" element={<ThreadDetailPage />} />
+        <Route path="meetups" element={<MeetupsPage />} />
+        <Route path="resources" element={<ResourcesPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
 
-        {/* Protected — requires authentication */}
+        {/* Protected — requires authentication to create content */}
         <Route element={<ProtectedRoute />}>
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="profile" element={<ProfilePage />} />
           <Route path="activity" element={<ActivityPage />} />
-          <Route path="meetups" element={<MeetupsPage />} />
-          <Route path="resources" element={<ResourcesPage />} />
           <Route path="submit" element={<SubmitDiscussionPage />} />
         </Route>
 
