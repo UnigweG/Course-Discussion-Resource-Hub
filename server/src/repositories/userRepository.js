@@ -22,3 +22,7 @@ export const updateLastLoginAt = async (userId) =>
     { lastLoginAt: new Date() },
     { new: true },
   ).select(safeUserProjection);
+
+// Update username and/or avatar for a user
+export const updateUserProfile = async (userId, updates) =>
+  User.findByIdAndUpdate(userId, updates, { new: true, runValidators: true }).select(safeUserProjection);

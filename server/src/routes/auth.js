@@ -4,6 +4,7 @@ import {
   login,
   logout,
   register,
+  updateProfile,
 } from "../controllers/authController.js";
 import { requireAuth } from "../middleware/auth.js";
 import { uploadAvatar } from "../middleware/upload.js";
@@ -15,5 +16,8 @@ router.post("/register", uploadAvatar, register);
 router.post("/login", login);
 router.post("/logout", logout);
 router.get("/me", requireAuth, getCurrentUser);
+
+// Profile update — requires auth, accepts optional new avatar image
+router.patch("/profile", requireAuth, uploadAvatar, updateProfile);
 
 export default router;
