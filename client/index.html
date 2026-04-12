@@ -5,8 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Course Discussion &amp; Resource Hub</title>
+    <!--
+      Blocking script: runs synchronously before first paint so the correct
+      dark-mode class and colour theme are set on <html> before React renders.
+      This prevents the flash of wrong theme/light-mode on page load.
+    -->
+    <script>
+      (function () {
+        try {
+          var theme   = localStorage.getItem('theme') || 'indigo';
+          var darkVal = localStorage.getItem('darkMode');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var dark = darkVal === 'true' || (darkVal === null && prefersDark);
+          if (dark) document.documentElement.classList.add('dark');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) { /* localStorage blocked (private browsing, etc.) — safe to ignore */ }
+      })();
+    </script>
   </head>
-  <body class="bg-gray-50 text-gray-900 antialiased">
+  <body class="antialiased">
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
