@@ -7,7 +7,7 @@ function EmptyState({ title, description, action }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 py-16 px-6 text-center">
       <svg
-        className="mx-auto h-12 w-12 text-gray-300 dark:text-gray-600"
+        className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-600"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
