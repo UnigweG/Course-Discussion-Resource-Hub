@@ -49,10 +49,14 @@ app.use((_req, res) => {
 app.use((err, _req, res, _next) => {
   console.error(err.stack);
   const status = err.status || 500;
-  res.status(status).json({
-    success: false,
-    message: env.nodeEnv === "development" ? err.message : "Internal server error",
-  });
+  // Surface the real message for operational errors and any 4xx.
+  // Unexpected 5xx errors stay generic in prod so internals don't leak.
+  const isSafe = err.isOperational || (status >= 400 && status < 500);
+  const message =
+    isSafe || env.nodeEnv === "development"
+      ? err.message
+      : "Internal server error";
+  res.status(status).json({ success: false, message });
 });
 
 export default app;

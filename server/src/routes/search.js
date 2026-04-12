@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { search } from "../controllers/discussionController.js";
+import { searchAll } from "../controllers/searchController.js";
 
 const router = Router();
 
 // GET /api/search?q=keyword
-// Queries the discussions collection in MongoDB — no login required
-router.get("/", search);
+// Searches discussions, resources, and meetups. No login required.
+router.get("/", searchAll);
 
 export default router;
