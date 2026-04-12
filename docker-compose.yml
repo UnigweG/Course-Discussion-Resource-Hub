@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: cdrh_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: course_hub
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: cdrh_server
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    ports:
+      - "5001:5001"
+    environment:
+      PORT: 5001
+      NODE_ENV: production
+      MONGODB_URI: mongodb://mongo:27017/course_hub
+      JWT_SECRET: ${JWT_SECRET}
+      COOKIE_SECRET: ${COOKIE_SECRET}
+      AUTH_COOKIE_NAME: ${AUTH_COOKIE_NAME:-auth_token}
+      CLIENT_URL: http://localhost:3000
+    volumes:
+      - uploads_data:/app/uploads
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: cdrh_client
+    restart: unless-stopped
+    depends_on:
+      - server
+    ports:
+      - "3000:3000"
+
+volumes:
+  mongo_data:
+  uploads_data:
