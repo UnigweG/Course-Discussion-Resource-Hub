@@ -28,7 +28,7 @@ function ResultCard({ item, type }) {
           {item.body || item.description}
         </p>
       )}
-      <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+      <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
         {item.authorUsername ? `by ${item.authorUsername}` : item.organizerUsername ? `by ${item.organizerUsername}` : ''}
       </p>
     </li>
@@ -102,13 +102,13 @@ function SearchPage() {
       {error && <p className="text-red-500 dark:text-red-400 mb-4 text-sm">{error}</p>}
 
       {results === null && !loading && (
-        <p className="text-gray-500 dark:text-gray-400 text-sm">
+        <p className="text-gray-600 dark:text-gray-400 text-sm">
           Enter a keyword above to search across all content.
         </p>
       )}
 
       {results !== null && totalCount === 0 && (
-        <p className="text-gray-500 dark:text-gray-400 text-sm">No results found for that search.</p>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">No results found for that search.</p>
       )}
 
       {results !== null && totalCount > 0 && (
@@ -122,7 +122,7 @@ function SearchPage() {
             if (items.length === 0) return null;
             return (
               <section key={key}>
-                <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
+                <h2 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-3">
                   {label} ({items.length})
                 </h2>
                 <ul className="space-y-3">

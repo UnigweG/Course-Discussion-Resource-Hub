@@ -66,7 +66,7 @@ function MeetupCard({ meetup, currentUser, onRsvp, onFeedback }) {
 
       <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{meetup.description}</p>
 
-      <div className="flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400 mb-4">
+      <div className="flex flex-wrap gap-4 text-xs text-gray-600 dark:text-gray-400 mb-4">
         <span>📍 {meetup.location}</span>
         <span>🗓 {new Date(meetup.date).toLocaleString()}</span>
         <span>👥 {meetup.rsvps.length} attending</span>
@@ -111,7 +111,7 @@ function MeetupCard({ meetup, currentUser, onRsvp, onFeedback }) {
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Comment <span className="font-normal text-gray-400">(optional)</span>
+              Comment <span className="font-normal text-gray-500">(optional)</span>
             </label>
             <textarea
               value={comment}
@@ -288,7 +288,7 @@ function MeetupsPage() {
             className={`pb-2 px-4 text-sm font-medium capitalize border-b-2 transition-colors ${
               filter === f
                 ? 'border-brand-600 text-brand-600 dark:text-brand-400 dark:border-brand-400'
-                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
             }`}
           >
             {f}
@@ -307,7 +307,7 @@ function MeetupsPage() {
           ))}
         </div>
       ) : filtered.length === 0 ? (
-        <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-12">
+        <p className="text-sm text-gray-600 dark:text-gray-400 text-center py-12">
           {filter === 'upcoming'
             ? 'No upcoming meetups. Be the first to schedule one!'
             : 'No past meetups yet.'}

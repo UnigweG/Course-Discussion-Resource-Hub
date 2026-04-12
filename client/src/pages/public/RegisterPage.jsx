@@ -112,7 +112,7 @@ function RegisterPage() {
         {/* Optional avatar upload with live preview */}
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Profile Picture <span className="text-gray-400 font-normal">(optional)</span>
+            Profile Picture <span className="text-gray-500 font-normal">(optional)</span>
           </label>
           <div className="flex items-center gap-3">
             {avatarPreview && (
@@ -126,7 +126,7 @@ function RegisterPage() {
               type="file"
               accept="image/jpeg,image/png,image/gif,image/webp"
               onChange={handleAvatarChange}
-              className="flex-1 text-sm text-gray-500 dark:text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-brand-50 dark:file:bg-brand-900/30 file:text-brand-700 dark:file:text-brand-300 hover:file:bg-brand-100"
+              className="flex-1 text-sm text-gray-600 dark:text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-brand-50 dark:file:bg-brand-900/30 file:text-brand-700 dark:file:text-brand-300 hover:file:bg-brand-100"
             />
           </div>
           {avatarError && <p className="mt-1 text-xs text-red-500 dark:text-red-400">{avatarError}</p>}
@@ -140,7 +140,7 @@ function RegisterPage() {
           {isSubmitting ? 'Creating account…' : 'Create Account'}
         </button>
 
-        <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
           Already registered?{' '}
           <Link to="/login" className="font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700">
             Sign In

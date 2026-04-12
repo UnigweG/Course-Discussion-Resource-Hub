@@ -13,12 +13,12 @@ function DiscussionCard({ discussion, commentCount }) {
       </Link>
       <p className="text-xs text-brand-600 dark:text-brand-400 mt-1 font-medium">{discussion.course}</p>
       {discussion.body && (
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 line-clamp-2">{discussion.body}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">{discussion.body}</p>
       )}
       <div className="flex items-center justify-between mt-2">
-        <p className="text-xs text-gray-400 dark:text-gray-500">by {discussion.authorUsername}</p>
+        <p className="text-xs text-gray-600 dark:text-gray-400">by {discussion.authorUsername}</p>
         {commentCount !== undefined && (
-          <span className="text-xs text-gray-400 dark:text-gray-500">💬 {commentCount}</span>
+          <span className="text-xs text-gray-600 dark:text-gray-400">💬 {commentCount}</span>
         )}
       </div>
     </li>
@@ -88,7 +88,7 @@ function HomePage() {
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           {!loading && !error && discussions.length === 0 && (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               No discussions yet.{' '}
               <Link to="/submit" className="text-brand-600 dark:text-brand-400 hover:underline">Start one!</Link>
             </p>
@@ -117,7 +117,7 @@ function HomePage() {
                 ))}
               </ul>
             ) : hotThreads.length === 0 ? (
-              <p className="text-sm text-gray-400 dark:text-gray-500">No activity this week yet.</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">No activity this week yet.</p>
             ) : (
               <ul className="space-y-3">
                 {hotThreads.map((d) => (
@@ -154,7 +154,7 @@ function HomePage() {
       {/* CTA ──────────────────────────────────────────────────────────── */}
       <section className="text-center py-8">
         <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">Ready to get started?</h2>
-        <p className="mt-2 text-gray-500 dark:text-gray-400">
+        <p className="mt-2 text-gray-600 dark:text-gray-400">
           Create an account and join the conversation.
         </p>
         <div className="mt-6 flex justify-center gap-3">

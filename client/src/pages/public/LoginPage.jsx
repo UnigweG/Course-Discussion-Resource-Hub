@@ -97,7 +97,7 @@ function LoginPage() {
           {isSubmitting ? 'Signing in…' : 'Sign In'}
         </button>
 
-        <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400">
           Don&apos;t have an account?{' '}
           <Link to="/register" className="font-medium text-brand-600 dark:text-brand-400 hover:text-brand-700">
             Register

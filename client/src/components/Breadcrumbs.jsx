@@ -35,7 +35,7 @@ function Breadcrumbs() {
 
   return (
     <nav aria-label="Breadcrumb" className="mb-4">
-      <ol className="flex items-center flex-wrap gap-1.5 text-sm text-gray-500 dark:text-gray-400">
+      <ol className="flex items-center flex-wrap gap-1.5 text-sm text-gray-600 dark:text-gray-400">
         <li>
           <Link to="/" className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
             Home

@@ -8,7 +8,7 @@ function SectionHeader({ title, count }) {
     <div className="flex items-center justify-between mb-3">
       <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100">{title}</h2>
       {count !== undefined && (
-        <span className="text-xs text-gray-400 dark:text-gray-500">{count} item{count !== 1 ? 's' : ''}</span>
+        <span className="text-xs text-gray-600 dark:text-gray-400">{count} item{count !== 1 ? 's' : ''}</span>
       )}
     </div>
   );
@@ -23,9 +23,9 @@ function ActivityRow({ to, primary, secondary, date }) {
     >
       <div className="min-w-0">
         <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{primary}</p>
-        {secondary && <p className="text-xs text-gray-400 dark:text-gray-500">{secondary}</p>}
+        {secondary && <p className="text-xs text-gray-600 dark:text-gray-400">{secondary}</p>}
       </div>
-      <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0 ml-4">
+      <span className="text-xs text-gray-600 dark:text-gray-400 shrink-0 ml-4">
         {new Date(date).toLocaleDateString()}
       </span>
     </Link>
@@ -76,7 +76,7 @@ function ActivityPage() {
         <section>
           <SectionHeader title="My Discussions" count={discussions.length} />
           {discussions.length === 0 ? (
-            <p className="text-sm text-gray-400 dark:text-gray-500">No discussions yet.</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">No discussions yet.</p>
           ) : (
             <div className="space-y-2">
               {discussions.map((d) => (
@@ -96,7 +96,7 @@ function ActivityPage() {
         <section>
           <SectionHeader title="My Comments" count={comments.length} />
           {comments.length === 0 ? (
-            <p className="text-sm text-gray-400 dark:text-gray-500">No comments yet.</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">No comments yet.</p>
           ) : (
             <div className="space-y-2">
               {comments.map((c) => (
@@ -115,7 +115,7 @@ function ActivityPage() {
         <section>
           <SectionHeader title="Resources I Shared" count={resources.length} />
           {resources.length === 0 ? (
-            <p className="text-sm text-gray-400 dark:text-gray-500">No resources shared yet.</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">No resources shared yet.</p>
           ) : (
             <div className="space-y-2">
               {resources.map((r) => (
