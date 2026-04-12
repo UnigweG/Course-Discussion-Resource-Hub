@@ -32,22 +32,27 @@ const SEED_USERS = [
 ];
 
 export const seedSampleUser = async () => {
-  const count = await User.countDocuments();
-  if (count > 0) {
-    console.log(`Seed skipped — ${count} user(s) already exist`);
-    return;
-  }
+  let created = 0;
+  let skipped = 0;
 
   for (const u of SEED_USERS) {
+    const exists = await User.findOne({ email: u.email });
+    if (exists) {
+      console.log(`  skip — ${u.email} already exists`);
+      skipped++;
+      continue;
+    }
     await User.create({
       username: u.username,
       email: u.email,
       passwordHash: await bcrypt.hash(u.password, 10),
       role: u.role,
     });
+    console.log(`  created — ${u.email} (${u.role})`);
+    created++;
   }
 
-  console.log(`Seed complete — inserted ${SEED_USERS.length} users into 'users' collection`);
+  console.log(`Seed done — ${created} created, ${skipped} skipped`);
 };
 
 // Run standalone: npm run seed --workspace server
