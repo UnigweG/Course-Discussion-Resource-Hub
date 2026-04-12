@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import PageHeader from '../../components/PageHeader';
 import { useAuth } from '../../contexts/AuthContext';
+import { useToast } from '../../contexts/ToastContext';
 
+// ─── Star rating picker ──────────────────────────────────────────────────────
 function StarRating({ value, onChange }) {
   return (
     <div className="flex gap-1">
@@ -10,7 +12,9 @@ function StarRating({ value, onChange }) {
           key={n}
           type="button"
           onClick={() => onChange(n)}
-          className={`text-2xl leading-none ${n <= value ? 'text-yellow-400' : 'text-gray-300'} hover:text-yellow-400 transition-colors`}
+          className={`text-2xl leading-none transition-colors ${
+            n <= value ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600 hover:text-yellow-400'
+          }`}
         >
           ★
         </button>
@@ -19,19 +23,19 @@ function StarRating({ value, onChange }) {
   );
 }
 
+// ─── Single meetup card ──────────────────────────────────────────────────────
 function MeetupCard({ meetup, currentUser, onRsvp, onFeedback }) {
   const [showFeedback, setShowFeedback] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
-  const isRsvpd = currentUser && meetup.rsvps.some((r) => r.user === currentUser._id);
+  const isRsvpd    = currentUser && meetup.rsvps.some((r) => r.user === currentUser._id);
   const hasFeedback = currentUser && meetup.feedback.some((f) => f.user === currentUser._id);
-  const isPast = new Date(meetup.date) < new Date();
-  const avgRating =
-    meetup.feedback.length > 0
-      ? (meetup.feedback.reduce((sum, f) => sum + f.rating, 0) / meetup.feedback.length).toFixed(1)
-      : null;
+  const isPast      = new Date(meetup.date) < new Date();
+  const avgRating   = meetup.feedback.length > 0
+    ? (meetup.feedback.reduce((s, f) => s + f.rating, 0) / meetup.feedback.length).toFixed(1)
+    : null;
 
   async function handleFeedbackSubmit(e) {
     e.preventDefault();
@@ -45,22 +49,24 @@ function MeetupCard({ meetup, currentUser, onRsvp, onFeedback }) {
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+    <div className="card rounded-xl p-5">
       <div className="flex items-start justify-between gap-4 mb-2">
         <div>
-          <h3 className="font-semibold text-gray-900">{meetup.title}</h3>
-          <p className="text-xs text-blue-600 mt-0.5">{meetup.course} · by {meetup.organizerUsername}</p>
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100">{meetup.title}</h3>
+          <p className="text-xs text-brand-600 dark:text-brand-400 mt-0.5">
+            {meetup.course} · by {meetup.organizerUsername}
+          </p>
         </div>
         {avgRating && (
-          <span className="text-xs text-yellow-600 font-medium bg-yellow-50 px-2 py-0.5 rounded-full shrink-0">
+          <span className="text-xs font-medium bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 px-2 py-0.5 rounded-full shrink-0">
             ★ {avgRating}
           </span>
         )}
       </div>
 
-      <p className="text-sm text-gray-600 mb-3">{meetup.description}</p>
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{meetup.description}</p>
 
-      <div className="flex flex-wrap gap-4 text-xs text-gray-500 mb-4">
+      <div className="flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400 mb-4">
         <span>📍 {meetup.location}</span>
         <span>🗓 {new Date(meetup.date).toLocaleString()}</span>
         <span>👥 {meetup.rsvps.length} attending</span>
@@ -73,58 +79,53 @@ function MeetupCard({ meetup, currentUser, onRsvp, onFeedback }) {
               onClick={() => onRsvp(meetup._id, isRsvpd ? 'leave' : 'join')}
               className={`text-sm px-4 py-1.5 rounded-md font-medium transition-colors ${
                 isRsvpd
-                  ? 'bg-red-50 text-red-600 hover:bg-red-100'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                  ? 'bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100'
+                  : 'btn-primary'
               }`}
             >
               {isRsvpd ? 'Cancel RSVP' : 'RSVP'}
             </button>
           )}
-
           {isPast && isRsvpd && !hasFeedback && (
             <button
               onClick={() => setShowFeedback((v) => !v)}
-              className="text-sm px-4 py-1.5 rounded-md font-medium bg-yellow-50 text-yellow-700 hover:bg-yellow-100 transition-colors"
+              className="text-sm px-4 py-1.5 rounded-md font-medium bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 hover:bg-yellow-100 transition-colors"
             >
               Leave Feedback
             </button>
           )}
-
           {hasFeedback && (
-            <span className="text-xs text-green-600 font-medium self-center">✓ Feedback submitted</span>
+            <span className="text-xs text-green-600 dark:text-green-400 font-medium self-center">
+              ✓ Feedback submitted
+            </span>
           )}
         </div>
       )}
 
+      {/* Inline feedback form */}
       {showFeedback && (
-        <form onSubmit={handleFeedbackSubmit} className="mt-4 border-t border-gray-100 pt-4 space-y-3">
+        <form onSubmit={handleFeedbackSubmit} className="mt-4 border-t border-gray-100 dark:border-gray-700 pt-4 space-y-3">
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Rating</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Rating</label>
             <StarRating value={rating} onChange={setRating} />
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-700 mb-1">Comment (optional)</label>
+            <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Comment <span className="font-normal text-gray-400">(optional)</span>
+            </label>
             <textarea
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               rows={2}
               maxLength={500}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input"
             />
           </div>
           <div className="flex gap-2">
-            <button
-              type="submit"
-              disabled={!rating || submitting}
-              className="text-sm px-4 py-1.5 rounded-md font-medium bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 transition-colors"
-            >
+            <button type="submit" disabled={!rating || submitting} className="btn-primary">
               {submitting ? 'Submitting…' : 'Submit'}
             </button>
-            <button
-              type="button"
-              onClick={() => setShowFeedback(false)}
-              className="text-sm px-4 py-1.5 rounded-md font-medium text-gray-500 hover:text-gray-700"
-            >
+            <button type="button" onClick={() => setShowFeedback(false)} className="btn-secondary">
               Cancel
             </button>
           </div>
@@ -134,18 +135,16 @@ function MeetupCard({ meetup, currentUser, onRsvp, onFeedback }) {
   );
 }
 
+// ─── Create meetup modal ─────────────────────────────────────────────────────
 function CreateMeetupModal({ onClose, onCreate }) {
   const [form, setForm] = useState({ title: '', description: '', course: '', location: '', date: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  function handleChange(e) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  }
+  const onChange = (e) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError('');
     if (!form.title || !form.description || !form.course || !form.location || !form.date) {
       setError('All fields are required.');
       return;
@@ -162,63 +161,38 @@ function CreateMeetupModal({ onClose, onCreate }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-lg p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Schedule a Meetup</h2>
-        {error && <p className="text-sm text-red-600 mb-3">{error}</p>}
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="card rounded-xl w-full max-w-lg p-6 animate-slide-up">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          Schedule a Meetup
+        </h2>
+        {error && <p className="text-sm text-red-500 dark:text-red-400 mb-3">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           {[
-            { name: 'title', label: 'Title', type: 'text', placeholder: 'e.g. COSC 360 Midterm Study Session' },
-            { name: 'course', label: 'Course', type: 'text', placeholder: 'e.g. COSC 360' },
-            { name: 'location', label: 'Location', type: 'text', placeholder: 'e.g. Library Room 201 or Zoom link' },
-          ].map(({ name, label, type, placeholder }) => (
+            { name: 'title',    label: 'Title',    placeholder: 'e.g. COSC 360 Midterm Study Session' },
+            { name: 'course',   label: 'Course',   placeholder: 'e.g. COSC 360' },
+            { name: 'location', label: 'Location', placeholder: 'Library Room 201 or Zoom link' },
+          ].map(({ name, label, placeholder }) => (
             <div key={name}>
-              <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-              <input
-                type={type}
-                name={name}
-                value={form[name]}
-                onChange={handleChange}
-                placeholder={placeholder}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
+              <input type="text" name={name} value={form[name]} onChange={onChange}
+                placeholder={placeholder} className="input" />
             </div>
           ))}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Date & Time</label>
-            <input
-              type="datetime-local"
-              name="date"
-              value={form.date}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date &amp; Time</label>
+            <input type="datetime-local" name="date" value={form.date} onChange={onChange} className="input" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              rows={3}
-              maxLength={1000}
-              placeholder="What will you cover? Who should come?"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+            <textarea name="description" value={form.description} onChange={onChange} rows={3}
+              maxLength={1000} placeholder="What will you cover?" className="input" />
           </div>
           <div className="flex gap-3 pt-2">
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
-            >
+            <button type="submit" disabled={loading} className="btn-primary flex-1 py-2">
               {loading ? 'Creating…' : 'Create Meetup'}
             </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 py-2 border border-gray-300 text-gray-600 text-sm font-medium rounded-md hover:bg-gray-50 transition-colors"
-            >
+            <button type="button" onClick={onClose} className="btn-secondary flex-1 py-2">
               Cancel
             </button>
           </div>
@@ -228,8 +202,10 @@ function CreateMeetupModal({ onClose, onCreate }) {
   );
 }
 
+// ─── Page ────────────────────────────────────────────────────────────────────
 function MeetupsPage() {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [meetups, setMeetups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
@@ -251,8 +227,9 @@ function MeetupsPage() {
       body: JSON.stringify(formData),
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Failed to create.');
+    if (!res.ok) throw new Error(data.message || 'Failed to create meetup.');
     setMeetups((prev) => [data.data, ...prev]);
+    toast('Meetup created!', 'success');
   }
 
   async function handleRsvp(meetupId, action) {
@@ -265,6 +242,7 @@ function MeetupsPage() {
     const data = await res.json();
     if (res.ok && data.success) {
       setMeetups((prev) => prev.map((m) => m._id === meetupId ? data.data : m));
+      toast(action === 'join' ? 'RSVP confirmed!' : 'RSVP cancelled.', 'info');
     }
   }
 
@@ -278,6 +256,7 @@ function MeetupsPage() {
     const data = await res.json();
     if (res.ok && data.success) {
       setMeetups((prev) => prev.map((m) => m._id === meetupId ? data.data : m));
+      toast('Feedback submitted!', 'success');
     }
   }
 
@@ -288,27 +267,28 @@ function MeetupsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-1">
+      <div className="flex items-start justify-between mb-1">
         <PageHeader
           title="Study Meetups"
           description="Browse upcoming study sessions, RSVP, and share feedback."
         />
-        <button
-          onClick={() => setShowCreate(true)}
-          className="shrink-0 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          + Schedule Meetup
-        </button>
+        {user && (
+          <button onClick={() => setShowCreate(true)} className="btn-primary shrink-0">
+            + Schedule
+          </button>
+        )}
       </div>
 
-      {/* Filter tabs */}
-      <div className="flex gap-2 mb-6 border-b border-gray-200 mt-4">
+      {/* Upcoming / Past tabs */}
+      <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-gray-700 mt-4">
         {['upcoming', 'past'].map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
             className={`pb-2 px-4 text-sm font-medium capitalize border-b-2 transition-colors ${
-              filter === f ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+              filter === f
+                ? 'border-brand-600 text-brand-600 dark:text-brand-400 dark:border-brand-400'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
             }`}
           >
             {f}
@@ -317,10 +297,20 @@ function MeetupsPage() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-gray-500">Loading meetups…</p>
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="card rounded-xl p-5 animate-pulse space-y-2">
+              <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-1/2" />
+              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
+              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-full" />
+            </div>
+          ))}
+        </div>
       ) : filtered.length === 0 ? (
-        <p className="text-sm text-gray-400 text-center py-12">
-          {filter === 'upcoming' ? 'No upcoming meetups. Be the first to schedule one!' : 'No past meetups yet.'}
+        <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-12">
+          {filter === 'upcoming'
+            ? 'No upcoming meetups. Be the first to schedule one!'
+            : 'No past meetups yet.'}
         </p>
       ) : (
         <div className="space-y-4">

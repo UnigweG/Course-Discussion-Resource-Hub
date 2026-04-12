@@ -9,12 +9,13 @@ function SubmitDiscussionPage() {
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [postedId, setPostedId] = useState(null); // store the new discussion id for linking
+  // Store the new discussion id so we can render a direct link after posting
+  const [postedId, setPostedId] = useState(null);
 
   async function handleSubmit(e) {
     e.preventDefault();
 
-    // Basic client-side validation before hitting the server
+    // Client-side guard — all three fields are required
     if (!title.trim() || !body.trim() || !course.trim()) {
       setError('All fields are required.');
       return;
@@ -28,12 +29,8 @@ function SubmitDiscussionPage() {
       const res = await fetch('/api/discussions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // send auth cookie
-        body: JSON.stringify({
-          title: title.trim(),
-          body: body.trim(),
-          course: course.trim(),
-        }),
+        credentials: 'include',
+        body: JSON.stringify({ title: title.trim(), body: body.trim(), course: course.trim() }),
       });
 
       const data = await res.json();
@@ -43,8 +40,7 @@ function SubmitDiscussionPage() {
         return;
       }
 
-      // Show success and store the new discussion id so user can navigate to it
-      setSuccessMessage(data.message);
+      setSuccessMessage(data.message || 'Discussion posted!');
       setPostedId(data.data._id);
       setTitle('');
       setBody('');
@@ -57,16 +53,16 @@ function SubmitDiscussionPage() {
   }
 
   return (
-    <div className="max-w-xl mx-auto py-8 px-4">
+    <div className="max-w-xl mx-auto">
       <PageHeader
         title="Post a Discussion"
-        description="Start a new discussion for your course."
+        description="Start a new thread for your course."
       />
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Course field */}
+      <form onSubmit={handleSubmit} className="card rounded-xl p-6 space-y-4">
+        {/* Course */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Course <span className="text-red-500">*</span>
           </label>
           <input
@@ -74,14 +70,13 @@ function SubmitDiscussionPage() {
             value={course}
             onChange={(e) => setCourse(e.target.value)}
             placeholder="e.g. COSC 360"
-            required
-            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input"
           />
         </div>
 
-        {/* Title field */}
+        {/* Title */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Title <span className="text-red-500">*</span>
           </label>
           <input
@@ -89,35 +84,34 @@ function SubmitDiscussionPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="What do you want to discuss?"
-            required
-            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input"
           />
         </div>
 
-        {/* Body field */}
+        {/* Body */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Details <span className="text-red-500">*</span>
           </label>
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
-            placeholder="Provide more context…"
-            required
-            rows={5}
-            className="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Provide more context, share what you've tried, or ask your question…"
+            rows={6}
+            className="input"
           />
         </div>
 
-        {/* Error and success messages */}
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {/* Feedback messages */}
+        {error && <p className="text-red-500 dark:text-red-400 text-sm">{error}</p>}
+
         {successMessage && (
-          <div className="bg-green-50 border border-green-200 rounded-md p-3">
-            <p className="text-green-700 text-sm font-medium">{successMessage}</p>
+          <div className="rounded-md bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 p-3">
+            <p className="text-green-700 dark:text-green-400 text-sm font-medium">{successMessage}</p>
             {postedId && (
               <Link
                 to={`/threads/${postedId}`}
-                className="text-sm text-blue-600 hover:underline mt-1 inline-block"
+                className="text-sm text-brand-600 dark:text-brand-400 hover:underline mt-1 inline-block"
               >
                 View your discussion →
               </Link>
@@ -125,11 +119,7 @@ function SubmitDiscussionPage() {
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 disabled:opacity-50 font-medium"
-        >
+        <button type="submit" disabled={loading} className="btn-primary w-full py-2.5">
           {loading ? 'Posting…' : 'Post Discussion'}
         </button>
       </form>
