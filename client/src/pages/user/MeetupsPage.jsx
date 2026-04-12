@@ -13,7 +13,7 @@ function StarRating({ value, onChange }) {
           type="button"
           onClick={() => onChange(n)}
           className={`text-2xl leading-none transition-colors ${
-            n <= value ? 'text-yellow-400' : 'text-gray-300 dark:text-gray-600 hover:text-yellow-400'
+            n <= value ? 'text-yellow-400' : 'text-gray-400 dark:text-gray-600 hover:text-yellow-400'
           }`}
         >
           ★

@@ -13,13 +13,12 @@
     <script>
       (function () {
         try {
-          var theme   = localStorage.getItem('theme') || 'indigo';
           var darkVal = localStorage.getItem('darkMode');
           var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          var dark = darkVal === 'true' || (darkVal === null && prefersDark);
-          if (dark) document.documentElement.classList.add('dark');
-          document.documentElement.setAttribute('data-theme', theme);
-        } catch (e) { /* localStorage blocked (private browsing, etc.) — safe to ignore */ }
+          if (darkVal === 'true' || (darkVal === null && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) { /* localStorage blocked — safe to ignore */ }
       })();
     </script>
   </head>

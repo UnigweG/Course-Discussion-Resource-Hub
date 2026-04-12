@@ -52,7 +52,7 @@ function HomePage() {
         <h1 className="text-3xl font-extrabold tracking-tight sm:text-5xl">
           Course Discussion &amp; Resource Hub
         </h1>
-        <p className="mx-auto mt-4 max-w-xl text-brand-200 text-lg">
+        <p className="mx-auto mt-4 max-w-xl text-white/80 text-lg">
           Ask questions, share resources, and collaborate with your classmates.
         </p>
         <div className="mx-auto mt-8 max-w-md">

@@ -2,17 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Theme colour tokens ──────────────────────────────────────────────────
-   Each data-theme value overrides the --brand-* custom properties.
-   Tailwind reads these at runtime via the CSS-variable brand palette in
-   tailwind.config.js — so every brand-* class updates automatically when
-   the theme changes, with no rebuild required.
-   Values are raw R G B triples so Tailwind's / alpha syntax works:
-     bg-brand-600/50  →  rgb(var(--brand-600) / 0.5)
+/* ─── Brand colour tokens (Indigo) ────────────────────────────────────────
+   Fixed indigo palette exposed as CSS custom properties.
+   Tailwind reads these at runtime via rgb(var(--brand-*) / <alpha-value>)
+   so opacity utilities like bg-brand-600/50 keep working.
 ──────────────────────────────────────────────────────────────────────────── */
 
-:root,
-[data-theme='indigo'] {
+:root {
   --brand-50:  238 242 255;
   --brand-100: 224 231 255;
   --brand-200: 199 210 254;
@@ -25,50 +21,10 @@
   --brand-900:  49  46 129;
 }
 
-[data-theme='blue'] {
-  --brand-50:  239 246 255;
-  --brand-100: 219 234 254;
-  --brand-200: 191 219 254;
-  --brand-300: 147 197 253;
-  --brand-400:  96 165 250;
-  --brand-500:  59 130 246;
-  --brand-600:  37  99 235;
-  --brand-700:  29  78 216;
-  --brand-800:  30  64 175;
-  --brand-900:  30  58 138;
-}
-
-[data-theme='green'] {
-  --brand-50:  240 253 244;
-  --brand-100: 220 252 231;
-  --brand-200: 187 247 208;
-  --brand-300: 134 239 172;
-  --brand-400:  74 222 128;
-  --brand-500:  34 197  94;
-  --brand-600:  22 163  74;
-  --brand-700:  21 128  61;
-  --brand-800:  22 101  52;
-  --brand-900:  20  83  45;
-}
-
-[data-theme='rose'] {
-  --brand-50:  255 241 242;
-  --brand-100: 255 228 230;
-  --brand-200: 254 205 211;
-  --brand-300: 253 164 175;
-  --brand-400: 251 113 133;
-  --brand-500: 244  63  94;
-  --brand-600: 225  29  72;
-  --brand-700: 190  18  60;
-  --brand-800: 159  18  57;
-  --brand-900: 136  19  55;
-}
-
 /* ─── Base styles ─────────────────────────────────────────────────────────── */
 
 @layer base {
   html {
-    /* Smooth colour transitions when toggling themes / dark mode */
     @apply transition-colors duration-200;
   }
 
@@ -77,34 +33,30 @@
   }
 }
 
-/* Explicit dark-mode base — outside @layer so it has highest unlayered priority */
+/* Explicit dark-mode base — outside @layer for guaranteed cascade priority */
 .dark body {
   background-color: rgb(3 7 18);      /* gray-950 */
   color:            rgb(243 244 246); /* gray-100 */
 }
 
-/* ─── Utility shorthands ──────────────────────────────────────────────────── */
+/* ─── Component utilities ─────────────────────────────────────────────────── */
 
 @layer components {
-  /* Standard card surface — use instead of repeating bg-white border … */
   .card {
     @apply bg-white border border-gray-200 rounded-xl shadow-sm;
   }
 
-  /* Form fields */
   .input {
     @apply w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white text-gray-900;
     @apply focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent;
     @apply placeholder-gray-400;
   }
 
-  /* Primary action button */
   .btn-primary {
     @apply px-4 py-2 rounded-md text-sm font-medium text-white bg-brand-600 hover:bg-brand-700;
     @apply disabled:opacity-50 transition-colors;
   }
 
-  /* Secondary / outline button */
   .btn-secondary {
     @apply px-4 py-2 rounded-md text-sm font-medium border border-gray-300 text-gray-700 bg-white hover:bg-gray-50;
     @apply transition-colors;
@@ -112,9 +64,7 @@
 }
 
 /* ─── Dark-mode overrides for component utilities ─────────────────────────
-   Using explicit .dark ancestor selectors (not @apply dark:) for maximum
-   reliability — avoids the :is(.dark *) specificity edge-cases that
-   @apply generates in Tailwind v3 @layer components blocks.
+   Using explicit .dark ancestor selectors for maximum reliability.
 ──────────────────────────────────────────────────────────────────────────── */
 
 .dark .card {
