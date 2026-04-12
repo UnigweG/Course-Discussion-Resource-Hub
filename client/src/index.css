@@ -2,12 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── Brand colour tokens (Indigo) ────────────────────────────────────────
-   Fixed indigo palette exposed as CSS custom properties.
-   Tailwind reads these at runtime via rgb(var(--brand-*) / <alpha-value>)
-   so opacity utilities like bg-brand-600/50 keep working.
-──────────────────────────────────────────────────────────────────────────── */
-
+/* ─── Brand colour tokens (Indigo) ────────────────────────────────────────── */
 :root {
   --brand-50:  238 242 255;
   --brand-100: 224 231 255;
@@ -21,84 +16,119 @@
   --brand-900:  49  46 129;
 }
 
-/* ─── Base styles ─────────────────────────────────────────────────────────── */
+/* ─── Design tokens — light mode defaults ───────────────────────────────────
+   All surfaces, text, and border colours are driven by these custom
+   properties so light and dark mode only differ in one place.
+──────────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --surface-page:   248 250 252;   /* slate-50 — soft off-white page */
+  --surface-card:   255 255 255;   /* pure white cards */
+  --surface-input:  255 255 255;
+  --surface-nav:    255 255 255;
 
+  /* Borders */
+  --border-base:    226 232 240;   /* slate-200 */
+  --border-input:   203 213 225;   /* slate-300 */
+  --border-nav:     79  70 229;    /* brand-600 — coloured nav accent */
+
+  /* Text */
+  --text-primary:   15  23  42;    /* slate-900 */
+  --text-secondary: 51  65  85;    /* slate-700 */
+  --text-muted:     71  85 105;    /* slate-600 */
+  --text-placeholder: 148 163 184; /* slate-400 */
+}
+
+/* ─── Design tokens — dark mode overrides ──────────────────────────────────── */
+.dark {
+  --surface-page:   3   7  18;    /* near black */
+  --surface-card:  31  41  55;    /* gray-800 */
+  --surface-input: 31  41  55;
+  --surface-nav:   17  24  39;    /* gray-900 */
+
+  --border-base:   55  65  81;    /* gray-700 */
+  --border-input:  75  85  99;    /* gray-600 */
+  --border-nav:    55  65  81;    /* gray-700 — subtle in dark */
+
+  --text-primary:  243 244 246;   /* gray-100 */
+  --text-secondary:209 213 219;   /* gray-300 */
+  --text-muted:    156 163 175;   /* gray-400 */
+  --text-placeholder: 107 114 128; /* gray-500 */
+}
+
+/* ─── Base ─────────────────────────────────────────────────────────────────── */
 @layer base {
   html {
     @apply transition-colors duration-200;
   }
-
   body {
-    @apply min-h-screen bg-gray-50 text-gray-900;
+    min-height: 100vh;
+    background-color: rgb(var(--surface-page));
+    color: rgb(var(--text-primary));
   }
 }
 
-/* Explicit dark-mode base — outside @layer for guaranteed cascade priority */
-.dark body {
-  background-color: rgb(3 7 18);      /* gray-950 */
-  color:            rgb(243 244 246); /* gray-100 */
-}
-
-/* ─── Component utilities ─────────────────────────────────────────────────── */
-
+/* ─── Component utilities ──────────────────────────────────────────────────── */
 @layer components {
+
+  /* Card — light mode gets a top accent stripe in brand colour */
   .card {
-    @apply bg-white border border-gray-200 rounded-xl shadow-sm;
+    background-color: rgb(var(--surface-card));
+    border: 1px solid rgb(var(--border-base));
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
   }
 
   .input {
-    @apply w-full border border-gray-300 rounded-md px-3 py-2 text-sm bg-white text-gray-900;
+    @apply w-full rounded-lg px-3 py-2 text-sm;
     @apply focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent;
-    @apply placeholder-gray-400;
+    background-color: rgb(var(--surface-input));
+    border: 1px solid rgb(var(--border-input));
+    color: rgb(var(--text-primary));
+  }
+
+  .input::placeholder {
+    color: rgb(var(--text-placeholder));
   }
 
   .btn-primary {
-    @apply px-4 py-2 rounded-md text-sm font-medium text-white bg-brand-600 hover:bg-brand-700;
-    @apply disabled:opacity-50 transition-colors;
+    @apply px-4 py-2 rounded-lg text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700;
+    @apply disabled:opacity-50 transition-colors shadow-sm;
   }
 
   .btn-secondary {
-    @apply px-4 py-2 rounded-md text-sm font-medium border border-gray-300 text-gray-700 bg-white hover:bg-gray-50;
-    @apply transition-colors;
+    @apply px-4 py-2 rounded-lg text-sm font-semibold transition-colors;
+    background-color: rgb(var(--surface-card));
+    border: 1px solid rgb(var(--border-base));
+    color: rgb(var(--text-secondary));
+  }
+
+  .btn-secondary:hover {
+    background-color: rgb(var(--surface-page));
   }
 }
 
-/* ─── Dark-mode overrides for component utilities ─────────────────────────
-   Using explicit .dark ancestor selectors for maximum reliability.
-──────────────────────────────────────────────────────────────────────────── */
-
-.dark .card {
-  background-color: rgb(31 41 55);   /* gray-800 */
-  border-color:     rgb(55 65 81);   /* gray-700 */
+/* ─── Light mode — card top-accent stripe ──────────────────────────────────── */
+html:not(.dark) .card {
+  border-top: 3px solid rgb(var(--brand-400));
 }
 
-.dark .input {
-  background-color:  rgb(31 41 55);   /* gray-800 */
-  border-color:      rgb(75 85 99);   /* gray-600 */
-  color:             rgb(243 244 246); /* gray-100 */
-}
-
-.dark .input::placeholder {
-  color: rgb(107 114 128); /* gray-500 */
-}
-
-.dark .btn-secondary {
-  border-color:      rgb(75 85 99);   /* gray-600 */
-  color:             rgb(229 231 235); /* gray-200 */
-  background-color:  rgb(31 41 55);   /* gray-800 */
-}
-
-.dark .btn-secondary:hover {
-  background-color: rgb(55 65 81);   /* gray-700 */
-}
-
-/* ─── Light-mode text: force dark colours ──────────────────────────────────
-   In light mode any muted-gray utility (400/500/600) renders too light
-   on a white background. Override them all to dark-gray equivalents.
-   Dark-mode classes are unaffected because the .dark selector wins.
-──────────────────────────────────────────────────────────────────────────── */
+/* ─── Light mode — text utility remaps ─────────────────────────────────────── */
+/* Remap Tailwind's lighter grays to readable values on white backgrounds.      */
 html:not(.dark) .text-gray-400,
-html:not(.dark) .text-gray-500,
-html:not(.dark) .text-gray-600 {
-  color: rgb(55 65 81); /* gray-700 — readable dark grey */
+html:not(.dark) .text-gray-500 {
+  color: rgb(var(--text-muted));    /* slate-600 */
 }
+html:not(.dark) .text-gray-600 {
+  color: rgb(var(--text-secondary)); /* slate-700 */
+}
+
+/* ─── Navbar accent ────────────────────────────────────────────────────────── */
+/* Provides a coloured bottom border on the navbar in light mode. */
+html:not(.dark) nav.site-nav {
+  border-bottom-color: rgb(var(--brand-600)) !important;
+  border-bottom-width: 2px;
+}
+
+/* ─── Animations ───────────────────────────────────────────────────────────── */
+/* (keyframes are defined in tailwind.config.js) */
