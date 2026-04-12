@@ -1,80 +1,115 @@
 # Course Discussion and Resource Hub
 
-Course Discussion and Resource Hub is a MERN-stack university project for course discussions, academic resources, and study meetup coordination.
+A MERN-stack web app for COSC 360 where university students can post course discussions, share academic resources, and organize study meetups.
 
-This repository is organized as a small monorepo:
+Built as a final project by Jeet Vaidya and Gabriel Unigwe.
+
+## Status
+
+**Complete** — full site delivered for the 50% milestone (April 2026). All baseline objectives are implemented: accounts, discussions, comments with async updates, resources with upvotes, meetups with RSVPs and feedback, search, and an admin dashboard. The project is dockerized and can be brought up with a single command.
+
+## Repo layout
 
 ```text
-client/   React frontend
-server/   Express + MongoDB backend
+client/             React + Vite + Tailwind frontend
+server/             Express + MongoDB backend
+docker-compose.yml  Mongo + API + frontend, one-shot startup
 ```
 
-## Current Status
+## Features
 
-The repository is currently implemented through **step 4** of the planned build:
+### Accounts
+- Register (with optional avatar upload), login, logout, session restore
+- Signed HTTP-only JWT cookie auth
+- Roles: `user` and `admin`; statuses: `active` and `disabled`
+- Profile page with avatar and activity summary
 
-- step 1: project scaffolding and folder structure
-- step 2: backend server, database config, health route, and MongoDB foundation
-- step 3: backend authentication foundation with JWT cookie auth routes and middleware
-- step 4: React app shell, routing, shared layout, navbar, breadcrumbs, and placeholder pages
+### Discussions
+- Full CRUD, each tagged with a course code (e.g. `COSC 360`)
+- Hot list, search, nested comments
+- MongoDB text index on title, body, and course
 
-## Implemented So Far
+### Comments
+- Nested under a discussion at `/api/discussions/:id/comments`
+- Async posting — new comments appear without a page reload
 
-### Backend
+### Resources
+- Types: `link`, `pdf`, `video`, `note`, `other`
+- Upvoting with live count updates
+- Text-indexed search on title, description, and course
 
-- Express server with centralized app setup
-- MongoDB connection and environment configuration
-- health check route
-- JSON 404 and error handling
-- `User` model with role and status fields
-- auth endpoints:
-  - `POST /api/auth/register`
-  - `POST /api/auth/login`
-  - `POST /api/auth/logout`
-  - `GET /api/auth/me`
-- signed JWT cookie authentication middleware
-- sample user seed script
+### Meetups
+- Create, RSVP, and leave 1–5 star feedback with a comment
+- Organizer sees the full RSVP list
 
-### Frontend
+### Admin
+- Admin-only dashboard gated by `requireAuth` + `requireRole("admin")`
+- Stats, user management (enable/disable), discussion moderation
 
-- Vite + React app entry
-- Tailwind CSS setup
-- React Router route shell
-- main layout with navbar, breadcrumbs, and footer
-- reusable components such as:
-  - `Navbar`
-  - `Breadcrumbs`
-  - `SearchBar`
-  - `PageHeader`
-  - `StatCard`
-  - `EmptyState`
-- public pages:
-  - home
-  - search
-  - thread detail
-  - login
-  - register
-  - not found
-- placeholder user pages:
-  - dashboard
-  - profile
-  - activity
-  - meetups
-- placeholder admin dashboard page
-- protected and admin route wrappers
+### Search
+- `GET /api/search` queries discussions, resources, and meetups
+- Navbar search bar returns grouped results
 
-## Current Gaps
+## Running it
 
-The frontend auth flow is not fully wired yet. The next step is to replace the mock shell auth behavior with real login, register, logout, session restore, and profile data from the backend.
+### With Docker (recommended)
 
-## Planned Build Order
+```bash
+cp server/.env.example server/.env   # set JWT_SECRET and COOKIE_SECRET
+docker compose up --build
+```
 
-1. Login, register, and profile flow
-2. Thread CRUD
-3. Comments
-4. Courses and resources
-5. Meetup flow
-6. Admin dashboard
-7. Analytics
-8. Docker and environment setup
-9. Seed data and cleanup
+- Frontend: http://localhost:3000
+- API health: http://localhost:5001/api/health
+
+### Locally
+
+```bash
+# Terminal 1 — backend
+cd server
+npm install
+cp .env.example .env                 # set JWT_SECRET and COOKIE_SECRET
+npm run seed                         # creates the test accounts below
+npm run dev                          # Express on :5000
+
+# Terminal 2 — frontend
+cd client
+npm install
+npm run dev                          # Vite on :5173
+```
+
+## Test accounts
+
+The seed script (`npm run seed` in `server/`) inserts these into an empty database:
+
+| Role    | Email                    | Password    |
+|---------|--------------------------|-------------|
+| Admin   | admin@university.edu     | Admin123!   |
+| Student | jeet@university.edu      | Student123! |
+| Student | gabriel@university.edu   | Student123! |
+| Student | demo@university.edu      | password123 |
+
+The seed is a no-op if the `users` collection already has data.
+
+## Tech stack
+
+- **Frontend:** React (Vite), React Router, Tailwind CSS, Context API
+- **Backend:** Node.js, Express, Mongoose, bcryptjs, JSON Web Tokens, multer
+- **Database:** MongoDB (local or Atlas)
+- **Infra:** Docker, docker-compose
+
+## Security
+
+- Passwords hashed with bcrypt
+- Signed HTTP-only JWT cookie (`Secure` + `SameSite` in production)
+- Client and server validation on every form / endpoint
+- Parameterized Mongoose queries — no string-built queries
+- CORS restricted to `CLIENT_URL`
+- Role-based middleware for admin routes
+- Secrets from environment variables, never in the repo
+- Central error handler — no stack traces in responses
+
+## Authors
+
+- **Jeet Vaidya** — Student #40955866 — [@JeetVaidya1](https://github.com/JeetVaidya1)
+- **Gabriel Unigwe** — Student #71577399 — [@UnigweG](https://github.com/UnigweG)
