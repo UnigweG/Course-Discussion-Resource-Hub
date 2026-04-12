@@ -1,6 +1,7 @@
 import User from "../models/User.js";
 
-const safeUserProjection = "username email role status lastLoginAt createdAt updatedAt";
+// Fields safe to send to the frontend — never include passwordHash
+const safeUserProjection = "username email role status avatar lastLoginAt createdAt updatedAt";
 
 export const findUserByEmail = async (email) =>
   User.findOne({ email: email.toLowerCase() });

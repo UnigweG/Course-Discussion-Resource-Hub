@@ -31,10 +31,15 @@ export const registerUser = async (payload) => {
   }
 
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+
+  // avatarPath comes from multer — it's the filename saved in /uploads, or null if no file uploaded
+  const avatarPath = payload.avatarPath || null;
+
   const user = await createUser({
     username,
     email,
     passwordHash,
+    avatar: avatarPath,
   });
 
   return findSafeUserById(user.id);

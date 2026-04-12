@@ -29,6 +29,11 @@ const userSchema = new mongoose.Schema(
       enum: ["active", "disabled"],
       default: "active",
     },
+    // path to the uploaded avatar image, null if not set
+    avatar: {
+      type: String,
+      default: null,
+    },
     lastLoginAt: {
       type: Date,
       default: null,

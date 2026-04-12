@@ -51,10 +51,18 @@ function ProfilePage() {
     <div>
       <PageHeader title="Profile" description="Your account details." />
       <div className="max-w-lg rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-        {/* Avatar header */}
+        {/* Avatar header — show uploaded image or fall back to initials */}
         <div className="flex items-center gap-4 px-6 py-5 border-b border-gray-100">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-100 text-xl font-bold text-brand-700 shrink-0">
-            {initials}
+          <div className="h-14 w-14 shrink-0 rounded-full overflow-hidden bg-brand-100 flex items-center justify-center">
+            {user.avatar ? (
+              <img
+                src={`/uploads/${user.avatar}`}
+                alt={`${user.username} avatar`}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <span className="text-xl font-bold text-brand-700">{initials}</span>
+            )}
           </div>
           <div className="min-w-0">
             <p className="font-semibold text-gray-900 truncate">{user.username}</p>
