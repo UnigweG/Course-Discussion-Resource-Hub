@@ -5,13 +5,14 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 import env from "./config/env.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 import authRouter from "./routes/auth.js";
 import healthRouter from "./routes/health.js";
 import searchRouter from "./routes/search.js";
 import discussionsRouter from "./routes/discussions.js";
+
+// __dirname is not available in ES modules — derive it from import.meta.url
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 

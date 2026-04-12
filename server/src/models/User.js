@@ -42,8 +42,7 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-userSchema.index({ username: 1 }, { unique: true });
-userSchema.index({ email: 1 }, { unique: true });
+// unique: true on the fields above already creates these indexes — no need to repeat them
 
 const User = mongoose.model("User", userSchema);
 

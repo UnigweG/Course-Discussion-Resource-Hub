@@ -9,7 +9,7 @@ function DashboardPage() {
   return (
     <div>
       <PageHeader
-        title={`Welcome back, ${user?.name || 'User'}`}
+        title={`Welcome back, ${user?.username || 'User'}`}
         description="Your activity overview and quick links."
       />
 

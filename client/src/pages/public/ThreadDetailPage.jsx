@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import PageHeader from '../../components/PageHeader';
-import Breadcrumbs from '../../components/Breadcrumbs';
 
 function ThreadDetailPage() {
   const { threadId } = useParams();
@@ -118,7 +117,6 @@ function ThreadDetailPage() {
   return (
     <div className="max-w-2xl mx-auto py-8 px-4">
       {/* Breadcrumb — auto-generates from the URL path */}
-      <Breadcrumbs />
 
       {!isEditing ? (
         // --- View mode ---
