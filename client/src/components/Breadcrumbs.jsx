@@ -45,7 +45,7 @@ function Breadcrumbs() {
           <li key={c.path} className="flex items-center gap-1.5">
             <span className="text-gray-400 dark:text-gray-600">/</span>
             {c.isLast ? (
-              <span className="font-medium text-gray-700 dark:text-gray-200">{c.label}</span>
+              <span className="font-medium text-gray-600 dark:text-gray-200">{c.label}</span>
             ) : (
               <Link
                 to={c.path}
