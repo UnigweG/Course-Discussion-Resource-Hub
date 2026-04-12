@@ -6,7 +6,7 @@ function PageHeader({ title, description, actions }) {
   return (
     <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100 sm:text-3xl">
+        <h1 className="text-2xl font-bold tracking-tight text-gray-600 dark:text-gray-100 sm:text-3xl">
           {title}
         </h1>
         {description && (
