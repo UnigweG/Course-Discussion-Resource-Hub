@@ -227,7 +227,7 @@ function ThreadDetailPage() {
             </h2>
 
             {commentState.list.length === 0 && !commentState.loading ? (
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
                 No comments yet. Be the first!
               </p>
             ) : (
@@ -240,7 +240,7 @@ function ThreadDetailPage() {
                           {c.authorUsername}
                         </span>
                         <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">{c.body}</p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                           {new Date(c.createdAt).toLocaleString()}
                         </p>
                       </div>
@@ -278,7 +278,7 @@ function ThreadDetailPage() {
                 </button>
               </form>
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 <Link to="/login" className="text-brand-600 dark:text-brand-400 hover:underline">
                   Sign in
                 </Link>{' '}

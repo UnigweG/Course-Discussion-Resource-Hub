@@ -105,7 +105,7 @@ function ProfilePage() {
     );
   }
 
-  if (!user) return <p className="text-sm text-gray-500">You are not signed in.</p>;
+  if (!user) return <p className="text-sm text-gray-600">You are not signed in.</p>;
 
   const initials = user.username?.slice(0, 2).toUpperCase() || '??';
   // avatarPreview is the local preview; user.avatar is the stored filename served at /uploads/
@@ -146,7 +146,7 @@ function ProfilePage() {
               { label: 'Last login',   value: formatDate(user.lastLoginAt) },
             ].map(({ label, value }) => (
               <div key={label} className="flex justify-between text-sm py-2 border-b border-gray-100 dark:border-gray-700 last:border-0">
-                <span className="text-gray-500 dark:text-gray-400 font-medium">{label}</span>
+                <span className="text-gray-600 dark:text-gray-400 font-medium">{label}</span>
                 <span className="text-gray-900 dark:text-gray-100">{value}</span>
               </div>
             ))}

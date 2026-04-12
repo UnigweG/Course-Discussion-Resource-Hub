@@ -24,7 +24,7 @@ function ResourceCard({ resource, currentUser, onUpvote, onDelete }) {
         >
           {resource.title}
         </a>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+        <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
           {resource.course} · by {resource.authorUsername}
         </p>
         {resource.description && (
@@ -41,7 +41,7 @@ function ResourceCard({ resource, currentUser, onUpvote, onDelete }) {
           className={`flex flex-col items-center text-xs font-medium px-2 py-1 rounded-md transition-colors ${
             hasUpvoted
               ? 'bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300'
-              : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
+              : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600'
           } disabled:opacity-40`}
         >
           <span className="text-base leading-none">▲</span>
@@ -120,7 +120,7 @@ function AddResourceModal({ onClose, onAdd }) {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Description <span className="font-normal text-gray-400">(optional)</span>
+              Description <span className="font-normal text-gray-500">(optional)</span>
             </label>
             <textarea name="description" value={form.description} onChange={onChange}
               rows={2} maxLength={600} className="input" />
@@ -226,7 +226,7 @@ function ResourcesPage() {
           ))}
         </div>
       ) : resources.length === 0 ? (
-        <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-12">
+        <p className="text-sm text-gray-600 dark:text-gray-400 text-center py-12">
           No resources found.{' '}
           {user ? 'Be the first to share one!' : 'Log in to share resources.'}
         </p>

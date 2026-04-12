@@ -21,7 +21,7 @@ function EmptyState({ title, description, action }) {
       </svg>
       <h3 className="mt-4 text-sm font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
       {description && (
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{description}</p>
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{description}</p>
       )}
       {action && <div className="mt-6">{action}</div>}
     </div>

@@ -54,7 +54,7 @@ function DashboardPage() {
           ))}
         </div>
       ) : (activity?.recent.discussions ?? []).length === 0 ? (
-        <p className="text-sm text-gray-400 dark:text-gray-500 mb-8">
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-8">
           No discussions yet.{' '}
           <Link to="/submit" className="text-brand-600 dark:text-brand-400 hover:underline">
             Start one!
@@ -70,9 +70,9 @@ function DashboardPage() {
             >
               <div>
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{d.title}</p>
-                <p className="text-xs text-gray-400 dark:text-gray-500">{d.course}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{d.course}</p>
               </div>
-              <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0 ml-4">
+              <span className="text-xs text-gray-600 dark:text-gray-400 shrink-0 ml-4">
                 {new Date(d.createdAt).toLocaleDateString()}
               </span>
             </Link>

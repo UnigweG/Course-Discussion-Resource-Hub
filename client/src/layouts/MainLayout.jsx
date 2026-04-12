@@ -24,7 +24,7 @@ function MainLayout() {
 
       <footer className="border-t border-gray-200 bg-white dark:bg-gray-900 dark:border-gray-700">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-          <p className="text-center text-xs text-gray-400 dark:text-gray-500">
+          <p className="text-center text-xs text-gray-600 dark:text-gray-400">
             &copy; {new Date().getFullYear()} Course Discussion &amp; Resource Hub &mdash; A University Project
           </p>
         </div>

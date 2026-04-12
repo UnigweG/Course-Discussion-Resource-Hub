@@ -98,7 +98,7 @@ function AdminDashboardPage() {
             className={`pb-2 px-4 text-sm font-medium capitalize border-b-2 transition-colors ${
               tab === t
                 ? 'border-brand-600 text-brand-600 dark:text-brand-400 dark:border-brand-400'
-                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+                : 'border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
             }`}
           >
             {t}
@@ -117,7 +117,7 @@ function AdminDashboardPage() {
             className="input max-w-sm mb-4"
           />
           {loadingUsers ? (
-            <p className="text-sm text-gray-500 dark:text-gray-400">Loading users…</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Loading users…</p>
           ) : (
             <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
               <table className="w-full text-sm">
@@ -163,7 +163,7 @@ function AdminDashboardPage() {
                   ))}
                   {users.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="px-4 py-6 text-center text-gray-400 dark:text-gray-500">
+                      <td colSpan={5} className="px-4 py-6 text-center text-gray-600 dark:text-gray-400">
                         No users found.
                       </td>
                     </tr>
@@ -179,7 +179,7 @@ function AdminDashboardPage() {
       {tab === 'discussions' && (
         <div>
           {loadingDiscussions ? (
-            <p className="text-sm text-gray-500 dark:text-gray-400">Loading discussions…</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Loading discussions…</p>
           ) : (
             <div className="space-y-3">
               {discussions.map((d) => (
@@ -199,7 +199,7 @@ function AdminDashboardPage() {
                 </div>
               ))}
               {discussions.length === 0 && (
-                <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-6">No discussions found.</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 text-center py-6">No discussions found.</p>
               )}
             </div>
           )}

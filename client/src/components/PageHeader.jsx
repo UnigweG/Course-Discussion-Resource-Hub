@@ -10,7 +10,7 @@ function PageHeader({ title, description, actions }) {
           {title}
         </h1>
         {description && (
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{description}</p>
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{description}</p>
         )}
       </div>
       {actions && <div className="flex gap-2 shrink-0">{actions}</div>}
