@@ -91,3 +91,14 @@
 .dark .btn-secondary:hover {
   background-color: rgb(55 65 81);   /* gray-700 */
 }
+
+/* ─── Light-mode text: force dark colours ──────────────────────────────────
+   In light mode any muted-gray utility (400/500/600) renders too light
+   on a white background. Override them all to dark-gray equivalents.
+   Dark-mode classes are unaffected because the .dark selector wins.
+──────────────────────────────────────────────────────────────────────────── */
+html:not(.dark) .text-gray-400,
+html:not(.dark) .text-gray-500,
+html:not(.dark) .text-gray-600 {
+  color: rgb(55 65 81); /* gray-700 — readable dark grey */
+}
