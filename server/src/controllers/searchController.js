@@ -8,11 +8,16 @@ import Meetup from "../models/Meetup.js";
 // the client can render them in separate sections.
 export const searchAll = asyncHandler(async (req, res) => {
   const raw = (req.query.q || "").trim();
+
+  // No query — return the most recent items in each category so the
+  // Explore page can pre-populate before the user starts typing.
   if (!raw) {
-    return res.json({
-      success: true,
-      results: { discussions: [], resources: [], meetups: [] },
-    });
+    const [discussions, resources, meetups] = await Promise.all([
+      Discussion.find().sort({ createdAt: -1 }).limit(20),
+      Resource.find().sort({ createdAt: -1 }).limit(20),
+      Meetup.find().sort({ date: -1 }).limit(20),
+    ]);
+    return res.json({ success: true, results: { discussions, resources, meetups } });
   }
 
   // Escape any regex metacharacters so a user query like "C++" doesn't blow up
